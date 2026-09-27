@@ -1,37 +1,28 @@
 /* Sito di presentazione di Chiaro. Stessi colori dell'app (src/styles/tokens.css). */
 :root {
   --font: 'Source Sans 3', 'Segoe UI', system-ui, -apple-system, sans-serif;
-  --accent: #7c5cff;
-  --accent-soft: rgba(124, 92, 255, 0.16);
-  --gen-gradient: linear-gradient(100deg, #6d4cff 0%, #b347e6 55%, #ff6a88 100%);
-  --bg: #121212;
-  --surface: #1a1a1a;
-  --raised: #242424;
-  --border: #2f2f2f;
-  --text: #f1f1f1;
-  --text-2: #b8b8b8;
-  --text-3: #8a8a8a;
+  --accent: #f77a39;
+  --accent-fg: #ff9a5e;
+  --accent-text: #1a2436;
+  --accent-soft: rgba(247, 122, 57, 0.18);
+  --glow: #80e0ec;
+  --glow-soft: rgba(128, 224, 236, 0.35);
+  --gen-gradient: linear-gradient(100deg, #f25f22 0%, #f77a39 50%, #ffa15e 100%);
+  --bg: #28405f;
+  --surface: #2e4868;
+  --raised: #3d5a82;
+  --border: #45628a;
+  --text: #f4f7fb;
+  --text-2: #c3d0e0;
+  --text-3: #9db0c8;
   --radius: 14px;
   color-scheme: dark;
 }
-@media (prefers-color-scheme: light) {
-  :root {
-    --accent: #5b3df5;
-    --accent-soft: rgba(91, 61, 245, 0.1);
-    --bg: #f6f6f8;
-    --surface: #ffffff;
-    --raised: #f0f0f4;
-    --border: #e2e2e8;
-    --text: #1c1c1f;
-    --text-2: #55555c;
-    --text-3: #85858d;
-    color-scheme: light;
-  }
-}
+/* Il sito resta sempre blu: è il colore del marchio (l'app ha anche il tema chiaro). */
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body { margin: 0; font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.55; font-size: 17px; }
-a { color: var(--accent); }
+a { color: var(--accent-fg); }
 img, svg { display: block; }
 .wrap { width: min(1120px, 100% - 32px); margin: 0 auto; }
 
@@ -43,14 +34,14 @@ img, svg { display: block; }
 .nav-links a { color: var(--text-2); text-decoration: none; font-weight: 600; font-size: 15px; }
 .nav-links a:hover { color: var(--text); }
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 22px; border-radius: 999px; font-weight: 700; font-size: 16px; text-decoration: none; border: 0; cursor: pointer; font-family: inherit; }
-.btn-primary { background: var(--gen-gradient); color: #fff; }
+.btn-primary { background: var(--gen-gradient); color: var(--accent-text); box-shadow: 0 0 0 1px var(--glow-soft), 0 4px 20px var(--glow-soft); }
 .btn-primary:hover { filter: brightness(1.08); }
 .btn-secondary { background: var(--raised); color: var(--text); border: 1px solid var(--border); }
 .btn-sm { padding: 8px 16px; font-size: 15px; }
-.nav-links .btn { color: #fff; }
+.nav-links .btn { color: var(--accent-text); }
 
 /* Hero */
-.hero { padding: 88px 0 56px; text-align: center; }
+.hero { padding: 88px 0 56px; text-align: center; background: radial-gradient(60% 55% at 50% 40%, rgba(247, 122, 57, 0.28), transparent 70%), radial-gradient(70% 65% at 50% 40%, rgba(128, 224, 236, 0.14), transparent 75%); }
 .hero h1 { margin: 0 auto 18px; max-width: 820px; font-size: clamp(38px, 6vw, 64px); line-height: 1.08; letter-spacing: -0.02em; }
 .grad { background: var(--gen-gradient); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .hero p { margin: 0 auto 30px; max-width: 640px; color: var(--text-2); font-size: 20px; }
@@ -68,15 +59,15 @@ section h2 { margin: 0 0 10px; font-size: clamp(28px, 4vw, 40px); letter-spacing
 .card { padding: 22px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); }
 .card h3 { margin: 12px 0 6px; font-size: 19px; }
 .card p { margin: 0; color: var(--text-2); font-size: 16px; }
-.icon { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); }
+.icon { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent-fg); }
 
 .steps { counter-reset: s; display: grid; gap: 16px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.steps .card::before { counter-increment: s; content: counter(s); display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--gen-gradient); color: #fff; font-weight: 700; }
+.steps .card::before { counter-increment: s; content: counter(s); display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--gen-gradient); color: var(--accent-text); font-weight: 700; }
 
 /* Prezzi */
 .plans { display: grid; gap: 16px; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: stretch; }
 .plan { display: flex; flex-direction: column; gap: 10px; padding: 24px 20px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); }
-.plan.featured { border: 2px solid var(--accent); }
+.plan.featured { border: 2px solid var(--accent); box-shadow: 0 0 28px var(--glow-soft); }
 .plan h3 { margin: 0; font-size: 20px; }
 .plan .price { font-size: 36px; font-weight: 700; letter-spacing: -0.02em; }
 .plan .price span { font-size: 16px; font-weight: 600; color: var(--text-2); }
@@ -86,7 +77,7 @@ section h2 { margin: 0 0 10px; font-size: clamp(28px, 4vw, 40px); letter-spacing
 .plan .soon { display: none; margin-top: 8px; text-align: center; color: var(--text-3); font-size: 14px; font-weight: 600; }
 body[data-sales='off'] .plan .buy { display: none; }
 body[data-sales='off'] .plan .soon { display: block; }
-.badge { align-self: flex-start; padding: 3px 10px; border-radius: 999px; background: var(--accent); color: #fff; font-size: 12px; font-weight: 700; }
+.badge { align-self: flex-start; padding: 3px 10px; border-radius: 999px; background: var(--accent); color: var(--accent-text); font-size: 12px; font-weight: 700; }
 
 table.costs { width: 100%; max-width: 760px; margin: 28px auto 0; border-collapse: collapse; font-size: 15.5px; }
 table.costs th, table.costs td { padding: 9px 12px; border-bottom: 1px solid var(--border); text-align: left; }
