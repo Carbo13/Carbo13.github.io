@@ -127,3 +127,6 @@ footer nav { display: flex; gap: 18px; flex-wrap: wrap; }
 }
 body[data-sales='off'] .only-on { display: none; }
 body[data-sales='on'] .only-off { display: none; }
+
+.dev-link { max-width: 760px; margin: 22px auto 0; padding: 14px 18px; border-radius: var(--radius); border: 1px dashed var(--glow-soft); background: var(--glow-bg); color: var(--text-2); font-size: 15px; text-align: center; }
+.dev-link a { font-weight: 700; white-space: nowrap; }
