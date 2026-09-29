@@ -163,7 +163,7 @@
         var TABS = [['overview', 'Panoramica'], ['users', 'Utenti'], ['usage', 'Utilizzo'], ['credits', 'Crediti'], ['money', 'Soldi']];
         var RANGES = [[7, '7 giorni'], [30, '30 giorni'], [90, '90 giorni']];
         var PLAN = { free: 'Free', pro: 'Pro', full: 'Full', byok: 'Chiave propria', dev: 'Sviluppatore' };
-        var REASON = { reserve: 'Prenotazione', settle: 'Chiusura (restituito − costo)', subscription: 'Accredito abbonamento', renewal: 'Rinnovo', free_monthly: 'Ricarica Free', upgrade: 'Passaggio di piano', ended: 'Fine abbonamento', refund: 'Rimborso' };
+        var REASON = { ai: 'Richiesta AI', ai_open: 'Prenotazione aperta', reserve: 'Prenotazione', settle: 'Chiusura (restituito − costo)', subscription: 'Accredito abbonamento', renewal: 'Rinnovo', free_monthly: 'Ricarica Free', upgrade: 'Passaggio di piano', ended: 'Fine abbonamento', refund: 'Rimborso' };
         var FEAT = { generate: 'Genera', fill: 'Inserisci', remove: 'Rimuovi', expand: 'Espandi', similar: 'Simili', textSelect: 'Selezione con testo', promptBoost: 'Migliora prompt', styleRef: 'Rif. stile', structureRef: 'Rif. struttura' };
         var PALETTE = ['#22d3ee', '#fb923c', '#4ade80', '#bef264', '#60a5fa', '#fbbf24', '#f472b6', '#a78bfa', '#2dd4bf'];
         var C = { cyan: '#22d3ee', orange: '#fb923c', green: '#4ade80', lime: '#bef264', red: '#f87171', blue: '#60a5fa' };
@@ -383,6 +383,13 @@
           return { series: series, tot: tot, ids: ids };
         }
 
+        /** Tipo di movimento: per le richieste AI (prenotazione + chiusura unite) modello e funzione. */
+        function moveType(r) {
+          if (r.reason !== 'ai' && r.reason !== 'ai_open') return esc(REASON[r.reason] || r.reason);
+          var what = r.model ? modelName(r.model) : esc(REASON[r.reason]);
+          var note = r.reason === 'ai_open' ? 'prenotazione aperta' : r.ok === false ? 'fallita, restituito tutto' : r.feature ? (FEAT[r.feature] || r.feature) : '';
+          return what + (note ? ' <span class="muted">· ' + esc(note) + '</span>' : '');
+        }
         var views = {
           overview: function (d) {
             var u = d.users, m = d.money, ds = days(), ms = modelSeries(ds);
@@ -442,7 +449,7 @@
               card('Crediti rimasti a fine periodo', table(['Piano', 'Periodi chiusi', 'Media rimasta', '% del piano'], c.leftover.map(function (l) { return [badge(l.plan), n0(l.periods), n0(l.avgLeft), l.avgLeftPct == null ? '—' : l.avgLeftPct + '%']; }), [0, 1, 1, 1]), 'media') +
               '</div>' +
               card('Movimenti per tipo', table(['Tipo', 'Movimenti', 'Totale crediti'], c.byReason30.map(function (r) { return [esc(REASON[r.reason] || r.reason), n0(r.count), n0(r.delta)]; }), [0, 1, 1]), '30 giorni') +
-              card('Ultimi movimenti', table(['Quando', 'Utente', 'Tipo', 'Variazione', 'Saldo'], c.recent.map(function (r) { return [esc(dt(r.at)), '<span class="mono">' + esc(r.user) + '</span>', esc(REASON[r.reason] || r.reason), '<span class="' + (r.delta >= 0 ? 'pos' : 'neg') + '">' + (r.delta > 0 ? '+' : '') + n0(r.delta) + '</span>', n0(r.balance)]; }), [0, 0, 0, 1, 1], c.recent.map(function (r) { return r.user; })));
+              card('Ultimi movimenti', table(['Quando', 'Utente', 'Tipo', 'Variazione', 'Saldo'], c.recent.map(function (r) { return [esc(dt(r.at)), '<span class="mono">' + esc(r.user) + '</span>', moveType(r), '<span class="' + (r.delta >= 0 ? 'pos' : 'neg') + '"' + (r.reserved != null ? ' title="Prenotati ' + n0(r.reserved) + ', restituiti ' + n0(r.reserved + r.delta) + '"' : '') + '>' + (r.delta > 0 ? '+' : '') + n0(r.delta) + '</span>', n0(r.balance)]; }), [0, 0, 0, 1, 1], c.recent.map(function (r) { return r.user; })));
           },
           money: function (d) {
             var m = d.money, ds = days();
