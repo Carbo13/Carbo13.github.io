@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Statistiche — Kiaro</title>
+    <title>Statistiche — Kiarym</title>
     <meta name="robots" content="noindex, nofollow" />
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Cdefs%3E%3ClinearGradient id=%27g%27 x1=%270%27 y1=%270%27 x2=%271%27 y2=%271%27%3E%3Cstop offset=%270%27 stop-color=%27%23f4fb2a%27/%3E%3Cstop offset=%27.55%27 stop-color=%27%2303ff9c%27/%3E%3Cstop offset=%271%27 stop-color=%27%230156ed%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x=%271%27 y=%271%27 width=%2730%27 height=%2730%27 rx=%279%27 fill=%27url(%23g)%27/%3E%3Cpath d=%27M16 7l8 15H8z%27 fill=%27none%27 stroke=%27%2304162e%27 stroke-width=%272.2%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -135,7 +135,7 @@
 
     <main class="wrap" id="app" hidden>
       <div class="top">
-        <h1><svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4fb2a"/><stop offset=".55" stop-color="#03ff9c"/><stop offset="1" stop-color="#0156ed"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#lg)"/><path d="M16 7l8 15H8z" fill="none" stroke="#04162e" stroke-width="2.2" stroke-linejoin="round"/><path d="M4 17h7" stroke="#04162e" stroke-width="1.8" stroke-linecap="round" opacity=".9"/></svg> Kiaro · Statistiche</h1>
+        <h1><svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4fb2a"/><stop offset=".55" stop-color="#03ff9c"/><stop offset="1" stop-color="#0156ed"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#lg)"/><path d="M16 7l8 15H8z" fill="none" stroke="#04162e" stroke-width="2.2" stroke-linejoin="round"/><path d="M4 17h7" stroke="#04162e" stroke-width="1.8" stroke-linecap="round" opacity=".9"/></svg> Kiarym · Statistiche</h1>
         <div class="seg" id="viewSeg" role="group" aria-label="Dati"></div>
         <div class="seg" id="rangeSeg" role="group" aria-label="Periodo"></div>
         <label class="check"><input type="checkbox" id="exclude" checked /> Escludi account di prova</label>
@@ -456,10 +456,10 @@
             var row = function (k) { return [k === 'today' ? 'Oggi' : k === 'week' ? 'Questa settimana' : 'Questo mese', usd(m.spend[k], 3), usd(m.revenue[k]), signUsd(m.margin[k])]; };
             return card('Spesa, incassi e margine', table(['Periodo', 'Spesa OpenRouter', 'Incassi netti (stima)', 'Margine'], [row('today'), row('week'), row('month')], [0, 1, 1, 1]) + '<p class="muted">Pagamenti registrati in questa vista: ' + n0(m.payments) + '</p>') +
               '<div class="grid-2 row-gap">' +
-              card('Costo reale: chi paga', bars({ labels: labels(ds), titles: titles(ds), series: [{ label: 'Kiaro', color: C.orange, values: ds.map(function (x) { return x.costKiaro; }) }, { label: 'Utenti con chiave propria', color: C.blue, values: ds.map(function (x) { return x.costUser; }) }], fmt: function (v) { return usd(v, 3); }, total: true }), 'al giorno') +
+              card('Costo reale: chi paga', bars({ labels: labels(ds), titles: titles(ds), series: [{ label: 'Kiarym', color: C.orange, values: ds.map(function (x) { return x.costKiaro; }) }, { label: 'Utenti con chiave propria', color: C.blue, values: ds.map(function (x) { return x.costUser; }) }], fmt: function (v) { return usd(v, 3); }, total: true }), 'al giorno') +
               card('Incassi netti', area({ labels: labels(ds), titles: titles(ds), series: [{ label: 'Incassi netti', color: C.green, values: ds.map(function (x) { return x.revenue; }) }], fmt: function (v) { return usd(v); } }), 'al giorno') +
               '</div>' +
-              card('Spesa di Kiaro per piano', hbars(m.spendByPlan30.map(function (p) { return [PLAN[p.plan] || p.plan, p.costUsd]; }), function (i) { return PALETTE[i]; }, function (v) { return usd(v, 3); }), '30 giorni');
+              card('Spesa di Kiarym per piano', hbars(m.spendByPlan30.map(function (p) { return [PLAN[p.plan] || p.plan, p.costUsd]; }), function (i) { return PALETTE[i]; }, function (v) { return usd(v, 3); }), '30 giorni');
           },
         };
 
