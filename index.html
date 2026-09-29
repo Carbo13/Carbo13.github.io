@@ -114,7 +114,7 @@
               
               <h3>Full</h3>
               <div class="price">19,99 €<span>/mese</span></div>
-              <p class="tag">Tutto sbloccato, tutti i modelli, 4K e il doppio dei crediti.</p>
+              <p class="tag">Tutto sbloccato, tutti i modelli, 4K e più del doppio dei crediti.</p>
               <ul><li><strong>15.000</strong> crediti al mese (≈ 306 immagini)</li><li>Tutti i modelli</li><li>Fino a 4K, 4 varianti per volta</li><li>Espandi, selezione con testo, riferimenti</li><li>Selezione e rimozione sul dispositivo: gratis</li></ul>
               <a class="btn btn-secondary buy" href="app/?plans=1">Scegli Full</a><span class="soon">Disponibile a breve</span>
             </article>
@@ -165,5 +165,30 @@
         </nav>
       </div>
     </footer>
+    <div class="terms-backdrop" id="terms-gate" hidden>
+      <div class="terms-modal" role="dialog" aria-modal="true" aria-label="Prima di iniziare">
+        <h2>Prima di iniziare</h2>
+        <p>Kiaro è un editor di immagini che usa modelli di intelligenza artificiale di terze parti.</p>
+        <ul><li>I modelli generativi appartengono ai rispettivi sviluppatori: Nano Banana (Gemini) è di Google, GPT Image è di OpenAI, FLUX.2 è di Black Forest Labs. Kiaro li raggiunge tramite OpenRouter.</li><li>Kiaro non è affiliato, sponsorizzato né approvato da OpenRouter, Google, OpenAI o Black Forest Labs. Nomi e marchi appartengono ai rispettivi titolari.</li><li>Le immagini e i testi che invii alle funzioni AI passano da OpenRouter e dal fornitore del modello scelto, e sono soggetti anche ai loro termini e alle loro regole d’uso.</li><li>Non usare Kiaro per contenuti illegali, immagini intime di persone reali senza consenso, deepfake ingannevoli o contenuti che violano diritti di terzi.</li><li>I risultati dell’AI possono essere imprecisi. Le immagini esportate portano una marcatura che le identifica come generate o modificate con l’AI.</li></ul>
+        <p class="small">Termini dei fornitori: <a href="https://openrouter.ai/terms" target="_blank" rel="noreferrer">OpenRouter</a> · <a href="https://policies.google.com/terms/generative-ai/use-policy" target="_blank" rel="noreferrer">Google</a> · <a href="https://openai.com/policies/usage-policies" target="_blank" rel="noreferrer">OpenAI</a> · <a href="https://bfl.ai" target="_blank" rel="noreferrer">Black Forest Labs</a></p>
+        <label class="terms-check"><input type="checkbox" id="terms-check" /> <span>Ho letto e accetto i <a href="termini.html" target="_blank" rel="noreferrer">Termini d’uso</a> e l’<a href="privacy.html" target="_blank" rel="noreferrer">Informativa privacy</a>.</span></label>
+        <button class="btn btn-primary" id="terms-accept" disabled>Accetto e continuo</button>
+      </div>
+    </div>
+    <script>
+      (function () {
+        var K = "kiaro.termsAccepted", V = "2026-09-29";
+        try { if (localStorage.getItem(K) === V) return; } catch (e) {}
+        var g = document.getElementById('terms-gate'), c = document.getElementById('terms-check'), b = document.getElementById('terms-accept');
+        g.hidden = false;
+        document.body.style.overflow = 'hidden';
+        c.addEventListener('change', function () { b.disabled = !c.checked; });
+        b.addEventListener('click', function () {
+          try { localStorage.setItem(K, V); } catch (e) {}
+          g.hidden = true;
+          document.body.style.overflow = '';
+        });
+      })();
+    </script>
   </body>
 </html>
