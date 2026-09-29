@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Statistiche — Kiaro</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Cdefs%3E%3ClinearGradient id=%27g%27 x1=%270%27 y1=%270%27 x2=%271%27 y2=%271%27%3E%3Cstop offset=%270%27 stop-color=%27%23f4fb2a%27/%3E%3Cstop offset=%27.55%27 stop-color=%27%2303ff9c%27/%3E%3Cstop offset=%271%27 stop-color=%27%230156ed%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x=%271%27 y=%271%27 width=%2730%27 height=%2730%27 rx=%279%27 fill=%27url(%23g)%27/%3E%3Cpath d=%27M16 7l8 15H8z%27 fill=%27none%27 stroke=%27%2304162e%27 stroke-width=%272.2%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="../site.css" />
+    <style>
+      body { font-size: 15px; }
+      .st-wrap { width: min(1240px, 100% - 32px); margin: 0 auto; padding: 18px 0 60px; }
+      .st-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; }
+      .st-head h1 { font-size: 22px; margin: 0; margin-right: auto; display: flex; align-items: center; gap: 10px; }
+      .st-login { max-width: 380px; margin: 12vh auto; padding: 24px; border-radius: 18px; background: var(--surface); border: 1px solid var(--border); display: flex; flex-direction: column; gap: 12px; }
+      .st-login h1 { margin: 0; font-size: 22px; display: flex; gap: 10px; align-items: center; }
+      input[type=password] { padding: 11px 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font: inherit; }
+      .st-err { color: #ff7a7a; margin: 0; min-height: 1.4em; }
+      .st-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+      .st-tabs button { padding: 8px 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); color: var(--text-2); font: inherit; cursor: pointer; }
+      .st-tabs button[aria-selected=true] { background: var(--glow-bg); color: var(--text); border-color: var(--glow); }
+      .st-small { padding: 7px 12px !important; font-size: 14px !important; }
+      .st-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; margin-bottom: 16px; }
+      .st-card { padding: 14px; border-radius: 14px; background: var(--surface); border: 1px solid var(--border); }
+      .st-card .k { color: var(--text-3); font-size: 13px; }
+      .st-card .v { font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; }
+      .st-card .s { color: var(--text-2); font-size: 13px; }
+      .st-panel { padding: 16px; border-radius: 14px; background: var(--surface); border: 1px solid var(--border); margin-bottom: 14px; }
+      .st-panel h2 { font-size: 16px; margin: 0 0 10px; }
+      .st-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+      @media (max-width: 860px) { .st-2 { grid-template-columns: 1fr; } }
+      .chart { width: 100%; height: 190px; }
+      .chart text { fill: var(--text-3); font-size: 10px; }
+      .legend { display: flex; gap: 14px; font-size: 13px; color: var(--text-2); margin-top: 6px; flex-wrap: wrap; }
+      .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+      table { width: 100%; border-collapse: collapse; font-size: 14px; }
+      th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+      th { color: var(--text-3); font-weight: 600; }
+      td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
+      .tbl { overflow-x: auto; }
+      .pos { color: #3df5b0; }
+      .neg { color: #ff8a8a; }
+      .notes { color: var(--text-3); font-size: 13px; }
+      .toggle { display: flex; align-items: center; gap: 6px; color: var(--text-2); cursor: pointer; }
+      .hbar { display: grid; grid-template-columns: 170px 1fr 90px; gap: 8px; align-items: center; font-size: 13px; margin: 4px 0; }
+      .hbar .b { height: 10px; border-radius: 6px; background: var(--glow); }
+      #view { padding: 0; margin: 0; }
+      .st-panel h2, .st-card { text-align: left; }
+      .sub { color: var(--text-3); font-size: 13px; margin: 6px 0 2px; }
+      [hidden] { display: none !important; }
+    </style>
+  </head>
+  <body>
+    <form class="st-login" id="login">
+      <h1><svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4fb2a"/><stop offset=".55" stop-color="#03ff9c"/><stop offset="1" stop-color="#0156ed"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#lg)"/><path d="M16 7l8 15H8z" fill="none" stroke="#04162e" stroke-width="2.2" stroke-linejoin="round"/><path d="M4 17h7" stroke="#04162e" stroke-width="1.8" stroke-linecap="round" opacity=".9"/></svg> Statistiche</h1>
+      <p class="notes">Area riservata allo sviluppatore.</p>
+      <input type="password" id="pw" placeholder="Password" autocomplete="current-password" required />
+      <button class="btn btn-primary" type="submit" id="enter">Entra</button>
+      <p class="st-err" id="err" role="alert"></p>
+    </form>
+
+    <main class="st-wrap" id="app" hidden>
+      <div class="st-head">
+        <h1><svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4fb2a"/><stop offset=".55" stop-color="#03ff9c"/><stop offset="1" stop-color="#0156ed"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#lg)"/><path d="M16 7l8 15H8z" fill="none" stroke="#04162e" stroke-width="2.2" stroke-linejoin="round"/><path d="M4 17h7" stroke="#04162e" stroke-width="1.8" stroke-linecap="round" opacity=".9"/></svg> Statistiche Kiaro</h1>
+        <label class="toggle"><input type="checkbox" id="exclude" checked /> Escludi account di prova</label>
+        <button class="btn btn-secondary st-small" id="refresh" type="button">Aggiorna</button>
+        <button class="btn btn-secondary st-small" id="logout" type="button">Esci</button>
+      </div>
+      <p class="notes" id="updated"></p>
+      <nav class="st-tabs" role="tablist" id="tabs"></nav>
+      <section id="view"></section>
+      <ul class="notes" id="notes"></ul>
+    </main>
+
+    <script>
+      (function () {
+        var API = 'https://impzlgbmkwccqaonicxh.supabase.co/functions/v1/kiaro/stats';
+        var KEY = 'kiaro.devStats.pw';
+        var TABS = [['overview', 'Panoramica'], ['users', 'Utenti'], ['usage', 'Utilizzo'], ['credits', 'Crediti'], ['money', 'Soldi']];
+        var PLAN = { free: 'Free', pro: 'Pro', full: 'Full', byok: 'Chiave propria', dev: 'Sviluppatore' };
+        var REASON = { reserve: 'Prenotazione', settle: 'Chiusura (restituito − costo)', subscription: 'Accredito abbonamento', renewal: 'Rinnovo', free_monthly: 'Ricarica Free', upgrade: 'Passaggio di piano', ended: 'Fine abbonamento', refund: 'Rimborso' };
+        var FEAT = { generate: 'Genera', fill: 'Inserisci', remove: 'Rimuovi', expand: 'Espandi', similar: 'Simili', textSelect: 'Selezione con testo', promptBoost: 'Migliora prompt', styleRef: 'Rif. stile', structureRef: 'Rif. struttura' };
+        var data = null, tab = 'overview';
+        var $ = function (id) { return document.getElementById(id); };
+        var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+        var n0 = function (v) { return Number(v || 0).toLocaleString('it-IT'); };
+        var usd = function (v, d) { return (v < 0 ? '−' : '') + '$' + Math.abs(Number(v || 0)).toLocaleString('it-IT', { minimumFractionDigits: d == null ? 2 : d, maximumFractionDigits: d == null ? 2 : d }); };
+        var pct = function (v) { return (Number(v || 0) * 100).toLocaleString('it-IT', { maximumFractionDigits: 1 }) + '%'; };
+        var dd = function (day) { return day.slice(8, 10) + '/' + day.slice(5, 7); };
+        var sign = function (v) { return '<span class="' + (v >= 0 ? 'pos' : 'neg') + '">' + usd(v) + '</span>'; };
+        var pw = function () { try { return sessionStorage.getItem(KEY) || ''; } catch (e) { return ''; } };
+
+        function card(k, v, s) { return '<div class="st-card"><div class="k">' + esc(k) + '</div><div class="v">' + v + '</div>' + (s ? '<div class="s">' + s + '</div>' : '') + '</div>'; }
+        function panel(title, body) { return '<div class="st-panel"><h2>' + esc(title) + '</h2>' + body + '</div>'; }
+        function table(head, rows, numeric) {
+          return '<div class="tbl"><table><thead><tr>' + head.map(function (h, i) { return '<th' + (numeric && numeric[i] ? ' class="n"' : '') + '>' + esc(h) + '</th>'; }).join('') + '</tr></thead><tbody>' +
+            (rows.length ? rows.map(function (r) { return '<tr>' + r.map(function (c, i) { return '<td' + (numeric && numeric[i] ? ' class="n"' : '') + '>' + c + '</td>'; }).join('') + '</tr>'; }).join('') : '<tr><td colspan="' + head.length + '">Nessun dato</td></tr>') + '</tbody></table></div>';
+        }
+        /** Barre (anche impilate): series = [{label, color, values}] */
+        function bars(labels, series, fmt) {
+          var W = 760, H = 190, P = 26, n = labels.length;
+          var tot = labels.map(function (_, i) { return series.reduce(function (a, s) { return a + Math.max(0, s.values[i] || 0); }, 0); });
+          var max = Math.max.apply(null, tot.concat([0])) || 1;
+          var bw = (W - P) / n;
+          var out = '<svg class="chart" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" role="img">';
+          out += '<text x="0" y="10">' + esc(fmt ? fmt(max) : n0(max)) + '</text>';
+          labels.forEach(function (lab, i) {
+            var y = H - 16;
+            series.forEach(function (s) {
+              var v = Math.max(0, s.values[i] || 0), h = (v / max) * (H - 34);
+              y -= h;
+              if (h > 0) out += '<rect x="' + (P + i * bw + 1) + '" y="' + y + '" width="' + Math.max(1, bw - 2) + '" height="' + h + '" fill="' + s.color + '" rx="2"><title>' + esc(lab) + ' · ' + esc(s.label) + ': ' + esc(fmt ? fmt(v) : n0(v)) + '</title></rect>';
+            });
+            if (n <= 24 || i % Math.ceil(n / 12) === 0) out += '<text x="' + (P + i * bw + bw / 2) + '" y="' + (H - 3) + '" text-anchor="middle">' + esc(lab) + '</text>';
+          });
+          out += '</svg>';
+          if (series.length > 1) out += '<div class="legend">' + series.map(function (s) { return '<span><i style="background:' + s.color + '"></i>' + esc(s.label) + '</span>'; }).join('') + '</div>';
+          return out;
+        }
+        function hbars(rows, fmt) {
+          var max = Math.max.apply(null, rows.map(function (r) { return r[1]; }).concat([0])) || 1;
+          return rows.map(function (r) { return '<div class="hbar"><span>' + esc(r[0]) + '</span><div class="b" style="width:' + Math.max(2, (r[1] / max) * 100) + '%"></div><span class="n">' + esc(fmt ? fmt(r[1]) : n0(r[1])) + '</span></div>'; }).join('') || '<p class="notes">Nessun dato</p>';
+        }
+
+        var views = {
+          overview: function (d) {
+            var u = d.users, m = d.money;
+            return '<div class="st-grid">' +
+              card('Spesa oggi', usd(m.spend.today, 3), 'settimana ' + usd(m.spend.week) + ' · mese ' + usd(m.spend.month)) +
+              card('Incassi netti oggi', usd(m.revenue.today), 'settimana ' + usd(m.revenue.week) + ' · mese ' + usd(m.revenue.month)) +
+              card('Margine del mese', sign(m.margin.month), 'oggi ' + usd(m.margin.today) + ' · settimana ' + usd(m.margin.week)) +
+              card('Immagini oggi', n0(d.usage.images.today), 'settimana ' + n0(d.usage.images.week) + ' · mese ' + n0(d.usage.images.month)) +
+              card('Utenti attivi oggi', n0(u.active.day), '7 giorni ' + n0(u.active.week) + ' · 30 giorni ' + n0(u.active.month)) +
+              card('Utenti totali', n0(u.total), 'Pro ' + n0(u.byPlan.pro) + ' · Full ' + n0(u.byPlan.full) + ' · Chiave ' + n0(u.byPlan.byok) + ' · Free ' + n0(u.byPlan.free)) +
+              '</div>' +
+              '<div class="st-2">' +
+              panel('Spesa e incassi al giorno (30 giorni)', '<p class="sub">Spesa OpenRouter di Kiaro</p>' + bars(d.usage.perDay.map(function (r) { return dd(r.day); }), [{ label: 'Spesa Kiaro', color: '#ff8a5c', values: d.usage.perDay.map(function (r) { return r.costKiaro; }) }], function (v) { return usd(v, 3); }) +
+                '<p class="sub">Incassi netti (stima)</p>' + bars(d.usage.perDay.map(function (r) { return dd(r.day); }), [{ label: 'Incassi netti', color: '#3df5b0', values: d.usage.perDay.map(function (r) { return r.revenue; }) }], function (v) { return usd(v); })) +
+              panel('Immagini al giorno (30 giorni)', bars(d.usage.perDay.map(function (r) { return dd(r.day); }), [{ label: 'Immagini', color: '#00cdbe', values: d.usage.perDay.map(function (r) { return r.images; }) }])) +
+              '</div>';
+          },
+          users: function (d) {
+            var u = d.users, pd = u.perDay;
+            return '<div class="st-grid">' +
+              ['free', 'pro', 'full', 'byok', 'dev'].map(function (p) { return card(PLAN[p], n0(u.byPlan[p] || 0), p === 'free' && u.trialActive ? 'in prova gratuita di Chiave propria' : ''); }).join('') +
+              card('Termini accettati', n0(u.termsAccepted), 'account con accettazione registrata') +
+              '</div>' +
+              '<div class="st-2">' +
+              panel('Utenti attivi al giorno', bars(pd.map(function (r) { return dd(r.day); }), [{ label: 'Attivi', color: '#00cdbe', values: pd.map(function (r) { return r.active; }) }])) +
+              panel('Nuove iscrizioni al giorno', bars(pd.map(function (r) { return dd(r.day); }), [{ label: 'Nuovi', color: '#8cfe60', values: pd.map(function (r) { return r.new; }) }])) +
+              '</div>' +
+              panel('Chi usa di più (30 giorni)', table(['Utente', 'Piano', 'Richieste', 'Immagini', 'Crediti usati', 'Costo reale', 'Saldo', 'Ultima attività'],
+                d.topUsers.map(function (x) { return [esc(x.user), esc(PLAN[x.plan] || x.plan), n0(x.requests), n0(x.images), n0(x.credits), usd(x.costUsd, 3), n0(x.balance), esc(new Date(x.lastActive).toLocaleString('it-IT'))]; }),
+                [0, 0, 1, 1, 1, 1, 1, 0]));
+          },
+          usage: function (d) {
+            var us = d.usage, pd = us.perDay, labels = pd.map(function (r) { return dd(r.day); });
+            return '<div class="st-grid">' +
+              card('Richieste (30 giorni)', n0(us.requests30), 'errori ' + pct(us.errorRate30)) +
+              card('Immagini nel mese', n0(us.images.month)) +
+              '</div>' +
+              panel('Richieste al giorno: riuscite ed errori', bars(labels, [{ label: 'Riuscite', color: '#00cdbe', values: pd.map(function (r) { return r.requests - r.errors; }) }, { label: 'Errori', color: '#ff8a8a', values: pd.map(function (r) { return r.errors; }) }])) +
+              '<div class="st-2">' +
+              panel('Ore di attività (ora italiana, 30 giorni)', bars(us.byHour.map(function (_, h) { return String(h); }), [{ label: 'Richieste', color: '#8cfe60', values: us.byHour }])) +
+              panel('Funzioni più usate (30 giorni)', hbars(us.byFeature.map(function (f) { return [FEAT[f.feature] || f.feature, f.count]; }))) +
+              '</div>' +
+              panel('Modelli (30 giorni)', table(['Modello', 'Richieste', 'Immagini', 'Crediti', 'Costo reale'], us.byModel.map(function (m) { return [esc(m.model), n0(m.requests), n0(m.images), n0(m.credits), usd(m.costUsd, 3)]; }), [0, 1, 1, 1, 1]));
+          },
+          credits: function (d) {
+            var c = d.credits, pd = d.usage.perDay;
+            return '<div class="st-2">' +
+              panel('Crediti consumati al giorno', bars(pd.map(function (r) { return dd(r.day); }), [{ label: 'Crediti', color: '#f4fb2a', values: pd.map(function (r) { return r.credits; }) }])) +
+              panel('Crediti rimasti a fine periodo (media)', table(['Piano', 'Periodi chiusi', 'Media rimasta', '% del piano'], c.leftover.map(function (l) { return [esc(PLAN[l.plan] || l.plan), n0(l.periods), n0(l.avgLeft), l.avgLeftPct == null ? '—' : l.avgLeftPct + '%']; }), [0, 1, 1, 1])) +
+              '</div>' +
+              panel('Movimenti per tipo (30 giorni)', table(['Tipo', 'Movimenti', 'Totale crediti'], c.byReason30.map(function (r) { return [esc(REASON[r.reason] || r.reason), n0(r.count), n0(r.delta)]; }), [0, 1, 1])) +
+              panel('Ultimi movimenti', table(['Quando', 'Utente', 'Tipo', 'Variazione', 'Saldo'], c.recent.map(function (r) { return [esc(new Date(r.at).toLocaleString('it-IT')), esc(r.user), esc(REASON[r.reason] || r.reason), '<span class="' + (r.delta >= 0 ? 'pos' : 'neg') + '">' + (r.delta > 0 ? '+' : '') + n0(r.delta) + '</span>', n0(r.balance)]; }), [0, 0, 0, 1, 1]));
+          },
+          money: function (d) {
+            var m = d.money, pd = d.usage.perDay, labels = pd.map(function (r) { return dd(r.day); });
+            var row = function (k) { return [k === 'today' ? 'Oggi' : k === 'week' ? 'Questa settimana' : 'Questo mese', usd(m.spend[k], 3), usd(m.revenue[k]), sign(m.margin[k])]; };
+            return panel('Spesa, incassi e margine', table(['Periodo', 'Spesa OpenRouter', 'Incassi netti (stima)', 'Margine'], [row('today'), row('week'), row('month')], [0, 1, 1, 1]) +
+                '<p class="notes">Pagamenti registrati: ' + n0(m.payments.live) + ' reali, ' + n0(m.payments.test) + ' di prova.</p>') +
+              panel('Costo reale al giorno: chi paga', bars(labels, [{ label: 'Kiaro', color: '#ff8a5c', values: pd.map(function (r) { return r.costKiaro; }) }, { label: 'Utenti con chiave propria', color: '#6c8cff', values: pd.map(function (r) { return r.costUser; }) }], function (v) { return usd(v, 3); })) +
+              panel('Spesa di Kiaro per piano (30 giorni)', hbars(m.spendByPlan30.map(function (p) { return [PLAN[p.plan] || p.plan, p.costUsd]; }), function (v) { return usd(v, 3); }));
+          },
+        };
+
+        function render() {
+          $('tabs').innerHTML = TABS.map(function (t) { return '<button role="tab" data-tab="' + t[0] + '" aria-selected="' + (t[0] === tab) + '">' + t[1] + '</button>'; }).join('');
+          $('view').innerHTML = views[tab](data);
+          $('updated').textContent = 'Aggiornato: ' + new Date(data.generatedAt).toLocaleString('it-IT') + ' · ora italiana';
+          $('notes').innerHTML = data.notes.map(function (n) { return '<li>' + esc(n) + '</li>'; }).join('');
+        }
+
+        async function load(password) {
+          $('err').textContent = '';
+          $('enter').disabled = true;
+          try {
+            var res = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: password, excludeTest: $('exclude').checked }) });
+            var body = await res.json().catch(function () { return null; });
+            if (!res.ok) throw new Error((body && body.error && body.error.message) || 'Errore ' + res.status);
+            data = body;
+            try { sessionStorage.setItem(KEY, password); } catch (e) {}
+            $('login').hidden = true;
+            $('app').hidden = false;
+            render();
+          } catch (e) {
+            try { sessionStorage.removeItem(KEY); } catch (x) {}
+            $('app').hidden = true;
+            $('login').hidden = false;
+            $('err').textContent = e.message === 'Failed to fetch' ? 'Server non raggiungibile' : e.message;
+          } finally {
+            $('enter').disabled = false;
+          }
+        }
+
+        $('login').addEventListener('submit', function (e) { e.preventDefault(); load($('pw').value); });
+        $('refresh').addEventListener('click', function () { load(pw()); });
+        $('exclude').addEventListener('change', function () { load(pw()); });
+        $('logout').addEventListener('click', function () {
+          try { sessionStorage.removeItem(KEY); } catch (e) {}
+          data = null;
+          $('pw').value = '';
+          $('app').hidden = true;
+          $('login').hidden = false;
+        });
+        $('tabs').addEventListener('click', function (e) {
+          var b = e.target.closest('button[data-tab]');
+          if (!b) return;
+          tab = b.getAttribute('data-tab');
+          render();
+        });
+        if (!API) $('err').textContent = 'Backend non configurato in questa pubblicazione.';
+        else if (pw()) load(pw());
+      })();
+    </script>
+  </body>
+</html>
