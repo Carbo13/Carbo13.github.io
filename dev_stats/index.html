@@ -83,6 +83,7 @@
       .chart .hot { fill: #ffffff; opacity: 0; }
       .chart g.col:hover .hot, .chart g.col.on .hot { opacity: 0.05; }
       .legend { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 8px; color: var(--text-2); font-size: 12.5px; }
+      .mlogo { display: inline-block; width: 15px; height: 15px; margin-right: 7px; vertical-align: -3px; }
       .legend i, .tip i { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 6px; }
       .tip { position: fixed; z-index: 50; pointer-events: none; min-width: 170px; padding: 10px 12px; border-radius: 12px; background: #16161b; border: 1px solid var(--border-2); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6); font-size: 13px; }
       .tip b { display: block; margin-bottom: 6px; font-weight: 600; }
@@ -157,6 +158,7 @@
       (function () {
         var API = 'https://impzlgbmkwccqaonicxh.supabase.co/functions/v1/kiaro/stats';
         var MODEL_LABELS = {"google/gemini-3.1-flash-image":"Nano Banana 2","google/gemini-3-pro-image-preview":"Nano Banana Pro","google/gemini-3.1-flash-lite-image":"Nano Banana 2 Lite","openai/gpt-image-2.5-flare":"GPT Image 2.5 Flare","openai/gpt-image-2.5-sunburst":"GPT Image 2.5 Sunburst","black-forest-labs/flux.2-max":"FLUX.2 Max","black-forest-labs/flux.2-pro":"FLUX.2 Pro","black-forest-labs/flux.2-klein-4b":"FLUX.2 Klein","black-forest-labs/flux.2-flex":"FLUX.2 Flex"};
+        var MODEL_LOGOS = {"black-forest-labs":"data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZjRmNGY1IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTcuMTEzIDEwLjI0OEgxNC41NmwtMi41NTMtMy42MTYtNy45NjMgMTEuMjdoMi41NThsNS40MDUtNy42NTRoMi41NTJsLTUuNDA0IDcuNjUzaDIuNTY1bDUuMzkyLTcuNjUzTDI0IDIwIDE5Ljk3IDIwdi0yLjA5MWwtMi44NTctNC4wNDQtMi44NDIgNC4wMzdWMjBIMEwxMi4wMDggM2w1LjEwNSA3LjI0OXoiPjwvcGF0aD48L3N2Zz4=","google":"data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIwLjYxNiAxMC44MzVhMTQuMTQ3IDE0LjE0NyAwIDAxLTQuNDUtMy4wMDEgMTQuMTExIDE0LjExMSAwIDAxLTMuNjc4LTYuNDUyLjUwMy41MDMgMCAwMC0uOTc1IDAgMTQuMTM0IDE0LjEzNCAwIDAxLTMuNjc5IDYuNDUyIDE0LjE1NSAxNC4xNTUgMCAwMS00LjQ1IDMuMDAxYy0uNjUuMjgtMS4zMTguNTA1LTIuMDAyLjY3OGEuNTAyLjUwMiAwIDAwMCAuOTc1Yy42ODQuMTcyIDEuMzUuMzk3IDIuMDAyLjY3N2ExNC4xNDcgMTQuMTQ3IDAgMDE0LjQ1IDMuMDAxIDE0LjExMiAxNC4xMTIgMCAwMTMuNjc5IDYuNDUzLjUwMi41MDIgMCAwMC45NzUgMGMuMTcyLS42ODUuMzk3LTEuMzUxLjY3Ny0yLjAwM2ExNC4xNDUgMTQuMTQ1IDAgMDEzLjAwMS00LjQ1IDE0LjExMyAxNC4xMTMgMCAwMTYuNDUzLTMuNjc4LjUwMy41MDMgMCAwMDAtLjk3NSAxMy4yNDUgMTMuMjQ1IDAgMDEtMi4wMDMtLjY3OHoiIGZpbGw9IiMzMTg2RkYiPjwvcGF0aD48cGF0aCBkPSJNMjAuNjE2IDEwLjgzNWExNC4xNDcgMTQuMTQ3IDAgMDEtNC40NS0zLjAwMSAxNC4xMTEgMTQuMTExIDAgMDEtMy42NzgtNi40NTIuNTAzLjUwMyAwIDAwLS45NzUgMCAxNC4xMzQgMTQuMTM0IDAgMDEtMy42NzkgNi40NTIgMTQuMTU1IDE0LjE1NSAwIDAxLTQuNDUgMy4wMDFjLS42NS4yOC0xLjMxOC41MDUtMi4wMDIuNjc4YS41MDIuNTAyIDAgMDAwIC45NzVjLjY4NC4xNzIgMS4zNS4zOTcgMi4wMDIuNjc3YTE0LjE0NyAxNC4xNDcgMCAwMTQuNDUgMy4wMDEgMTQuMTEyIDE0LjExMiAwIDAxMy42NzkgNi40NTMuNTAyLjUwMiAwIDAwLjk3NSAwYy4xNzItLjY4NS4zOTctMS4zNTEuNjc3LTIuMDAzYTE0LjE0NSAxNC4xNDUgMCAwMTMuMDAxLTQuNDUgMTQuMTEzIDE0LjExMyAwIDAxNi40NTMtMy42NzguNTAzLjUwMyAwIDAwMC0uOTc1IDEzLjI0NSAxMy4yNDUgMCAwMS0yLjAwMy0uNjc4eiIgZmlsbD0idXJsKCNsb2JlLWljb25zLWdlbWluaS0wLV9SXzBfKSI+PC9wYXRoPjxwYXRoIGQ9Ik0yMC42MTYgMTAuODM1YTE0LjE0NyAxNC4xNDcgMCAwMS00LjQ1LTMuMDAxIDE0LjExMSAxNC4xMTEgMCAwMS0zLjY3OC02LjQ1Mi41MDMuNTAzIDAgMDAtLjk3NSAwIDE0LjEzNCAxNC4xMzQgMCAwMS0zLjY3OSA2LjQ1MiAxNC4xNTUgMTQuMTU1IDAgMDEtNC40NSAzLjAwMWMtLjY1LjI4LTEuMzE4LjUwNS0yLjAwMi42NzhhLjUwMi41MDIgMCAwMDAgLjk3NWMuNjg0LjE3MiAxLjM1LjM5NyAyLjAwMi42NzdhMTQuMTQ3IDE0LjE0NyAwIDAxNC40NSAzLjAwMSAxNC4xMTIgMTQuMTEyIDAgMDEzLjY3OSA2LjQ1My41MDIuNTAyIDAgMDAuOTc1IDBjLjE3Mi0uNjg1LjM5Ny0xLjM1MS42NzctMi4wMDNhMTQuMTQ1IDE0LjE0NSAwIDAxMy4wMDEtNC40NSAxNC4xMTMgMTQuMTEzIDAgMDE2LjQ1My0zLjY3OC41MDMuNTAzIDAgMDAwLS45NzUgMTMuMjQ1IDEzLjI0NSAwIDAxLTIuMDAzLS42Nzh6IiBmaWxsPSJ1cmwoI2xvYmUtaWNvbnMtZ2VtaW5pLTEtX1JfMF8pIj48L3BhdGg+PHBhdGggZD0iTTIwLjYxNiAxMC44MzVhMTQuMTQ3IDE0LjE0NyAwIDAxLTQuNDUtMy4wMDEgMTQuMTExIDE0LjExMSAwIDAxLTMuNjc4LTYuNDUyLjUwMy41MDMgMCAwMC0uOTc1IDAgMTQuMTM0IDE0LjEzNCAwIDAxLTMuNjc5IDYuNDUyIDE0LjE1NSAxNC4xNTUgMCAwMS00LjQ1IDMuMDAxYy0uNjUuMjgtMS4zMTguNTA1LTIuMDAyLjY3OGEuNTAyLjUwMiAwIDAwMCAuOTc1Yy42ODQuMTcyIDEuMzUuMzk3IDIuMDAyLjY3N2ExNC4xNDcgMTQuMTQ3IDAgMDE0LjQ1IDMuMDAxIDE0LjExMiAxNC4xMTIgMCAwMTMuNjc5IDYuNDUzLjUwMi41MDIgMCAwMC45NzUgMGMuMTcyLS42ODUuMzk3LTEuMzUxLjY3Ny0yLjAwM2ExNC4xNDUgMTQuMTQ1IDAgMDEzLjAwMS00LjQ1IDE0LjExMyAxNC4xMTMgMCAwMTYuNDUzLTMuNjc4LjUwMy41MDMgMCAwMDAtLjk3NSAxMy4yNDUgMTMuMjQ1IDAgMDEtMi4wMDMtLjY3OHoiIGZpbGw9InVybCgjbG9iZS1pY29ucy1nZW1pbmktMi1fUl8wXykiPjwvcGF0aD48ZGVmcz48bGluZWFyR3JhZGllbnQgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiIGlkPSJsb2JlLWljb25zLWdlbWluaS0wLV9SXzBfIiB4MT0iNyIgeDI9IjExIiB5MT0iMTUuNSIgeTI9IjEyIj48c3RvcCBzdG9wLWNvbG9yPSIjMDhCOTYyIj48L3N0b3A+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMDhCOTYyIiBzdG9wLW9wYWNpdHk9IjAiPjwvc3RvcD48L2xpbmVhckdyYWRpZW50PjxsaW5lYXJHcmFkaWVudCBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgaWQ9ImxvYmUtaWNvbnMtZ2VtaW5pLTEtX1JfMF8iIHgxPSI4IiB4Mj0iMTEuNSIgeTE9IjUuNSIgeTI9IjExIj48c3RvcCBzdG9wLWNvbG9yPSIjRjk0NTQzIj48L3N0b3A+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjRjk0NTQzIiBzdG9wLW9wYWNpdHk9IjAiPjwvc3RvcD48L2xpbmVhckdyYWRpZW50PjxsaW5lYXJHcmFkaWVudCBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgaWQ9ImxvYmUtaWNvbnMtZ2VtaW5pLTItX1JfMF8iIHgxPSIzLjUiIHgyPSIxNy41IiB5MT0iMTMuNSIgeTI9IjEyIj48c3RvcCBzdG9wLWNvbG9yPSIjRkFCQzEyIj48L3N0b3A+PHN0b3Agb2Zmc2V0PSIuNDYiIHN0b3AtY29sb3I9IiNGQUJDMTIiIHN0b3Atb3BhY2l0eT0iMCI+PC9zdG9wPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjwvc3ZnPg==","openai":"data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZjRmNGY1IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOS4yMDUgOC42NTh2LTIuMjZjMC0uMTkuMDcyLS4zMzMuMjM4LS40MjhsNC41NDMtMi42MTZjLjYxOS0uMzU3IDEuMzU2LS41MjMgMi4xMTctLjUyMyAyLjg1NCAwIDQuNjYyIDIuMjEyIDQuNjYyIDQuNTY2IDAgLjE2NyAwIC4zNTctLjAyNC41NDdsLTQuNzEtMi43NTlhLjc5Ny43OTcgMCAwMC0uODU2IDBsLTUuOTcgMy40NzN6bTEwLjYwOSA4LjhWMTIuMDZjMC0uMzMzLS4xNDMtLjU3LS40MjktLjczN2wtNS45Ny0zLjQ3MyAxLjk1LTEuMTE4YS40MzMuNDMzIDAgMDEuNDc2IDBsNC41NDMgMi42MTdjMS4zMDkuNzYgMi4xODkgMi4zNzggMi4xODkgMy45NDggMCAxLjgwOC0xLjA3IDMuNDczLTIuNzYgNC4xNjN6TTcuODAyIDEyLjcwM2wtMS45NS0xLjE0MmMtLjE2Ny0uMDk1LS4yMzktLjIzOC0uMjM5LS40MjhWNS44OTljMC0yLjU0NSAxLjk1LTQuNDcyIDQuNTkxLTQuNDcyIDEgMCAxLjkyNy4zMzMgMi43MTIuOTI4TDguMjMgNS4wNjdjLS4yODUuMTY2LS40MjguNDA0LS40MjguNzM3djYuODk4ek0xMiAxNS4xMjhsLTIuNzk1LTEuNTd2LTMuMzNMMTIgOC42NThsMi43OTUgMS41N3YzLjMzTDEyIDE1LjEyOHptMS43OTYgNy4yM2MtMSAwLTEuOTI3LS4zMzItMi43MTItLjkyN2w0LjY4Ni0yLjcxMmMuMjg1LS4xNjYuNDI4LS40MDQuNDI4LS43Mzd2LTYuODk4bDEuOTc0IDEuMTQyYy4xNjcuMDk1LjIzOC4yMzguMjM4LjQyOHY1LjIzM2MwIDIuNTQ1LTEuOTc0IDQuNDcyLTQuNjE0IDQuNDcyem0tNS42MzctNS4zMDNsLTQuNTQ0LTIuNjE3Yy0xLjMwOC0uNzYxLTIuMTg4LTIuMzc4LTIuMTg4LTMuOTQ4QTQuNDgyIDQuNDgyIDAgMDE0LjIxIDYuMzI3djUuNDIzYzAgLjMzMy4xNDMuNTcxLjQyOC43MzhsNS45NDcgMy40NDktMS45NSAxLjExOGEuNDMyLjQzMiAwIDAxLS40NzYgMHptLS4yNjIgMy45Yy0yLjY4OCAwLTQuNjYyLTIuMDIxLTQuNjYyLTQuNTE5IDAtLjE5LjAyNC0uMzguMDQ3LS41N2w0LjY4NiAyLjcxYy4yODYuMTY3LjU3MS4xNjcuODU2IDBsNS45Ny0zLjQ0OHYyLjI2YzAgLjE5LS4wNy4zMzMtLjIzNy40MjhsLTQuNTQzIDIuNjE2Yy0uNjE5LjM1Ny0xLjM1Ni41MjMtMi4xMTcuNTIzem01Ljg5OSAyLjgzYTUuOTQ3IDUuOTQ3IDAgMDA1LjgyNy00Ljc1NkMyMi4yODcgMTguMzM5IDI0IDE1Ljg0IDI0IDEzLjI5NmMwLTEuNjY1LS43MTMtMy4yODItMS45OTgtNC40NDguMTE5LS41LjE5LS45OTkuMTktMS40OTggMC0zLjQwMS0yLjc1OS01Ljk0Ny01Ljk0Ni01Ljk0Ny0uNjQyIDAtMS4yNi4wOTUtMS44OC4zMUE1Ljk2MiA1Ljk2MiAwIDAwMTAuMjA1IDBhNS45NDcgNS45NDcgMCAwMC01LjgyNyA0Ljc1N0MxLjcxMyA1LjQ0NyAwIDcuOTQ1IDAgMTAuNDljMCAxLjY2Ni43MTMgMy4yODMgMS45OTggNC40NDgtLjExOS41LS4xOSAxLS4xOSAxLjQ5OSAwIDMuNDAxIDIuNzU5IDUuOTQ2IDUuOTQ2IDUuOTQ2LjY0MiAwIDEuMjYtLjA5NSAxLjg4LS4zMDlhNS45NiA1Ljk2IDAgMDA0LjE2MiAxLjcxM3oiPjwvcGF0aD48L3N2Zz4=","openrouter":"data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZjRmNGY1IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTguNjU0IDMuODdhNS4wODcgNS4wODcgMCAxMTAgMTAuMTc0TDIzLjcgMTkuMDljLjY0LjY0MS4xODcgMS43MzctLjcyIDEuNzM3SDguNDhhOC40NzkgOC40NzkgMCAwMTAtMTYuOTU4aDEwLjE3NXpNOC40NzkgNy4yNmE1LjA4NyA1LjA4NyAwIDEwMCAxMC4xNzYgNS4wODcgNS4wODcgMCAwMDAtMTAuMTc1eiI+PC9wYXRoPjwvc3ZnPg=="};
         var KEY = 'kiaro.devStats.pw';
         var TABS = [['overview', 'Panoramica'], ['users', 'Utenti'], ['usage', 'Utilizzo'], ['credits', 'Crediti'], ['money', 'Soldi']];
         var RANGES = [[7, '7 giorni'], [30, '30 giorni'], [90, '90 giorni']];
@@ -178,6 +180,9 @@
         var longDay = function (day) { return new Date(day + 'T12:00:00').toLocaleDateString('it-IT', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' }); };
         var dt = function (iso) { return iso ? new Date(iso).toLocaleString('it-IT', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '—'; };
         var model = function (id) { return MODEL_LABELS[id] || id; };
+        /** Logo del fornitore (prefisso dell'ID), altrimenti quello di OpenRouter. */
+        var logo = function (id) { var src = MODEL_LOGOS[String(id).split('/')[0]] || MODEL_LOGOS.openrouter; return src ? '<img class="mlogo" alt="" src="' + src + '">' : ''; };
+        var modelName = function (id) { return logo(id) + esc(model(id)); };
         var signUsd = function (v) { return '<span class="' + (v >= 0 ? 'pos' : 'neg') + '">' + usd(v) + '</span>'; };
         var pw = function () { try { return sessionStorage.getItem(KEY) || ''; } catch (e) { return ''; } };
         var badge = function (plan) {
@@ -294,14 +299,14 @@
         var resizeTimer;
         addEventListener('resize', function () { clearTimeout(resizeTimer); resizeTimer = setTimeout(paint, 120); });
         function legend(series) {
-          return series.length > 1 ? '<div class="legend">' + series.map(function (s) { return '<span><i style="background:' + s.color + '"></i>' + esc(s.label) + '</span>'; }).join('') + '</div>' : '';
+          return series.length > 1 ? '<div class="legend">' + series.map(function (s) { return '<span><i style="background:' + s.color + '"></i>' + (s.icon || '') + esc(s.label) + '</span>'; }).join('') + '</div>' : '';
         }
         function hbars(rows, color, fmt) {
           var max = Math.max.apply(null, rows.map(function (r) { return r[1]; }).concat([0])) || 1;
           if (!rows.length) return '<p class="muted">Nessun dato</p>';
           return rows.map(function (r, i) {
             var c = typeof color === 'function' ? color(i) : color;
-            return '<div class="hbar"><span class="name">' + esc(r[0]) + '</span><span class="val">' + esc(fmt ? fmt(r[1]) : n0(r[1])) + '</span><div class="track"><div class="fill" style="width:' + Math.max(2, (r[1] / max) * 100) + '%;background:' + c + '"></div></div></div>';
+            return '<div class="hbar"><span class="name">' + (r[2] || esc(r[0])) + '</span><span class="val">' + esc(fmt ? fmt(r[1]) : n0(r[1])) + '</span><div class="track"><div class="fill" style="width:' + Math.max(2, (r[1] / max) * 100) + '%;background:' + c + '"></div></div></div>';
           }).join('');
         }
         function heatmap(perDay) {
@@ -347,7 +352,7 @@
           var o = c.o, title = o.titles ? o.titles[i] : o.labels[i];
           var rows = o.series.map(function (s) { return { s: s, v: s.values[i] || 0 }; });
           if (o.sortTip) rows.sort(function (a, b) { return b.v - a.v; });
-          var html = '<b>' + esc(title) + '</b>' + rows.filter(function (r) { return r.v || o.series.length < 4; }).map(function (r) { return '<div class="r"><span><i style="background:' + r.s.color + '"></i>' + esc(r.s.label) + '</span><span>' + esc(c.fmt(r.v)) + '</span></div>'; }).join('');
+          var html = '<b>' + esc(title) + '</b>' + rows.filter(function (r) { return r.v || o.series.length < 4; }).map(function (r) { return '<div class="r"><span><i style="background:' + r.s.color + '"></i>' + (r.s.icon || '') + esc(r.s.label) + '</span><span>' + esc(c.fmt(r.v)) + '</span></div>'; }).join('');
           if (o.total) html += '<div class="r tot"><span>Totale</span><span>' + esc(c.fmt(c.tot ? c.tot[i] : rows.reduce(function (a, r) { return a + r.v; }, 0))) + '</span></div>';
           if (c.kind === 'area') {
             var id = g.getAttribute('data-c'), v = document.getElementById(id + 'v');
@@ -373,7 +378,7 @@
           ds.forEach(function (d) { Object.keys(d.models).forEach(function (m) { tot[m] = (tot[m] || 0) + d.models[m]; }); });
           var ids = Object.keys(tot).sort(function (a, b) { return tot[b] - tot[a]; });
           var main = ids.slice(0, 6), rest = ids.slice(6);
-          var series = main.map(function (m, k) { return { label: model(m), color: PALETTE[k], values: ds.map(function (d) { return d.models[m] || 0; }) }; });
+          var series = main.map(function (m, k) { return { label: model(m), icon: logo(m), color: PALETTE[k], values: ds.map(function (d) { return d.models[m] || 0; }) }; });
           if (rest.length) series.push({ label: 'Altri', color: '#52525b', values: ds.map(function (d) { return rest.reduce(function (a, m) { return a + (d.models[m] || 0); }, 0); }) });
           return { series: series, tot: tot, ids: ids };
         }
@@ -381,7 +386,7 @@
         var views = {
           overview: function (d) {
             var u = d.users, m = d.money, ds = days(), ms = modelSeries(ds);
-            var topModels = ms.ids.slice(0, 6).map(function (id, k) { return [model(id), ms.tot[id], k]; });
+            var topModels = ms.ids.slice(0, 6).map(function (id, k) { return [model(id), ms.tot[id], modelName(id)]; });
             return '<div class="kpis">' +
               kpi('Spesa di oggi', usd(m.spend.today, 3), 'settimana ' + usd(m.spend.week) + ' · mese ' + usd(m.spend.month)) +
               kpi('Incassi netti di oggi', usd(m.revenue.today), 'settimana ' + usd(m.revenue.week) + ' · mese ' + usd(m.revenue.month)) +
@@ -392,7 +397,7 @@
               '</div>' +
               '<div class="grid-main row-gap">' +
               card('Immagini al giorno per modello', '<div class="big">' + n0(sum(ds, 'images')) + '</div><p class="muted" style="margin:0 0 8px">nel periodo</p>' + bars({ labels: labels(ds), titles: titles(ds), series: ms.series, total: true, sortTip: true }), 'ultimi ' + st.range + ' giorni') +
-              card('Modelli più usati', hbars(topModels.map(function (r) { return [r[0], r[1]]; }), function (i) { return PALETTE[i]; }), 'per immagini') +
+              card('Modelli più usati', hbars(topModels.map(function (r) { return r; }), function (i) { return PALETTE[i]; }), 'per immagini') +
               '</div>' +
               '<div class="grid-2 row-gap">' +
               card('Spesa e incassi', area({ labels: labels(ds), titles: titles(ds), series: [{ label: 'Incassi netti', color: C.green, values: ds.map(function (x) { return x.revenue; }) }, { label: 'Spesa OpenRouter', color: C.orange, values: ds.map(function (x) { return x.costKiaro; }) }], fmt: function (v) { return usd(v, v && v < 1 ? 3 : 2); } }), 'al giorno') +
@@ -428,7 +433,7 @@
               card('Ore di attività', bars({ labels: us.byHour.map(function (_, h) { return String(h); }), titles: us.byHour.map(function (_, h) { return 'Dalle ' + h + ' alle ' + ((h + 1) % 24); }), series: [{ label: 'Richieste', color: C.lime, values: us.byHour }], height: 220 }), 'ora italiana, 30 giorni') +
               card('Funzioni più usate', hbars(us.byFeature.map(function (f) { return [FEAT[f.feature] || f.feature, f.count]; }), function (i) { return PALETTE[i]; }), '30 giorni') +
               '</div>' +
-              card('Modelli', table(['Modello', 'Richieste', 'Immagini', 'Crediti', 'Costo reale'], us.byModel.map(function (m) { return [esc(model(m.model)), n0(m.requests), n0(m.images), n0(m.credits), usd(m.costUsd, 3)]; }), [0, 1, 1, 1, 1]), '30 giorni');
+              card('Modelli', table(['Modello', 'Richieste', 'Immagini', 'Crediti', 'Costo reale'], us.byModel.map(function (m) { return [modelName(m.model), n0(m.requests), n0(m.images), n0(m.credits), usd(m.costUsd, 3)]; }), [0, 1, 1, 1, 1]), '30 giorni');
           },
           credits: function (d) {
             var c = d.credits, ds = days();
@@ -469,7 +474,7 @@
             card('Immagini al giorno', area({ labels: labels(ds), titles: titles(ds), series: [{ label: 'Immagini', color: C.cyan, values: x.perDay }], height: 200 }), '30 giorni') +
             card('Ore di attività', bars({ labels: x.hours.map(function (_, h) { return String(h); }), titles: x.hours.map(function (_, h) { return 'Dalle ' + h + ' alle ' + ((h + 1) % 24); }), series: [{ label: 'Richieste', color: C.lime, values: x.hours }], height: 180 }), peakText) +
             '<div class="grid-2">' +
-            card('Modelli preferiti', hbars(x.models.map(function (m) { return [model(m.model), m.count]; }), function (i) { return PALETTE[i]; })) +
+            card('Modelli preferiti', hbars(x.models.map(function (m) { return [model(m.model), m.count, modelName(m.model)]; }), function (i) { return PALETTE[i]; })) +
             card('Funzioni', hbars(x.features.map(function (f) { return [FEAT[f.feature] || f.feature, f.count]; }), function (i) { return PALETTE[(i + 3) % PALETTE.length]; })) +
             '</div></aside>';
         }
