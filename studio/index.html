@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Image Studio — Kiarym</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Cdefs%3E%3ClinearGradient id=%27g%27 x1=%270%27 y1=%270%27 x2=%271%27 y2=%271%27%3E%3Cstop offset=%270%27 stop-color=%27%23f4fb2a%27/%3E%3Cstop offset=%27.55%27 stop-color=%27%2303ff9c%27/%3E%3Cstop offset=%271%27 stop-color=%27%230156ed%27/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x=%271%27 y=%271%27 width=%2730%27 height=%2730%27 rx=%279%27 fill=%27url(%23g)%27/%3E%3Cpath d=%27M16 7l8 15H8z%27 fill=%27none%27 stroke=%27%2304162e%27 stroke-width=%272.2%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E" />
+    <style>
+      :root { --bg: #0d0e10; --panel: #151619; --panel-2: #1b1c20; --border: #26282d; --border-2: #34373d; --text: #e9eaec; --text-2: #a9adb4; --text-3: #71767e; --accent: #0fe8a0; --alpha: #fb923c; --red: #ff6b7a; color-scheme: dark; }
+      * { box-sizing: border-box; }
+      body { margin: 0; min-height: 100vh; background: var(--bg); color: var(--text); font: 15px/1.5 'Source Sans 3', 'Segoe UI', system-ui, -apple-system, sans-serif; display: grid; place-items: center; padding: 16px; }
+      [hidden] { display: none !important; }
+      .card { width: min(420px, 100%); padding: 28px; border-radius: 16px; background: var(--panel); border: 1px solid var(--border); display: flex; flex-direction: column; gap: 14px; }
+      h1 { margin: 0; font-size: 21px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+      .badge { font: 600 11px ui-monospace, Menlo, monospace; color: #1a0f02; background: var(--alpha); border-radius: 6px; padding: 2px 7px; letter-spacing: .04em; }
+      p { margin: 0; color: var(--text-2); }
+      .warn { border-left: 3px solid var(--alpha); padding: 2px 0 2px 10px; color: var(--text-2); font-size: 14px; }
+      .input { padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-2); background: var(--panel-2); color: var(--text); font: inherit; outline: none; }
+      .input:focus { border-color: var(--accent); }
+      .check { display: flex; gap: 8px; align-items: center; color: var(--text-2); font-size: 14px; cursor: pointer; }
+      .check input { accent-color: var(--accent); }
+      .btn { padding: 10px 14px; border-radius: 10px; border: 0; background: var(--accent); color: #04162e; font: inherit; font-weight: 600; cursor: pointer; }
+      .btn:disabled { opacity: .6; cursor: default; }
+      .err { color: var(--red); min-height: 1.4em; font-size: 14px; }
+      .small { font-size: 13px; color: var(--text-3); }
+      a { color: var(--accent); }
+    </style>
+  </head>
+  <body>
+    <form class="card" id="gate" hidden>
+      <h1><svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4fb2a"/><stop offset=".55" stop-color="#03ff9c"/><stop offset="1" stop-color="#0156ed"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#lg)"/><path d="M16 7l8 15H8z" fill="none" stroke="#04162e" stroke-width="2.2" stroke-linejoin="round"/><path d="M4 17h7" stroke="#04162e" stroke-width="1.8" stroke-linecap="round" opacity=".9"/></svg> Image Studio <span class="badge">ALPHA</span></h1>
+      <p>Accesso riservato: l’editor fotografico di Kiarym è in fase di prova.</p>
+      <p class="warn">Non è nemmeno una beta: mancano funzioni, possono esserci errori e il lavoro può andare perso. Esporta spesso.</p>
+      <input class="input" id="pw" type="password" autocomplete="current-password" placeholder="Password" aria-label="Password" required autofocus />
+      <label class="check"><input type="checkbox" id="remember" /> Ricorda su questo dispositivo</label>
+      <button class="btn" id="go" type="submit">Entra</button>
+      <div class="err" id="err" role="alert"></div>
+      <p class="small"><a href="../">Torna a Kiarym</a></p>
+    </form>
+    <div class="card" id="loading" hidden><p>Apro Image Studio…</p></div>
+    <script>
+      (function () {
+        var API = 'https://impzlgbmkwccqaonicxh.supabase.co/functions/v1/studio';
+        var KEY = 'kiarym.studio.key';
+        var $ = function (id) { return document.getElementById(id); };
+        function b64(s) { var b = atob(s), u = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; }
+        function stored() { try { return sessionStorage.getItem(KEY) || localStorage.getItem(KEY); } catch (e) { return null; } }
+        function forget() { try { sessionStorage.removeItem(KEY); localStorage.removeItem(KEY); } catch (e) {} }
+        function keep(k, remember) { try { (remember ? localStorage : sessionStorage).setItem(KEY, k); } catch (e) {} }
+        function showGate(msg) { $('loading').hidden = true; $('gate').hidden = false; $('err').textContent = msg || ''; $('pw').focus(); }
+
+        // Il codice dello Studio è pubblicato cifrato (AES-256-GCM): [12 byte iv][dati]. La chiave arriva dal server.
+        async function open(keyB64) {
+          $('gate').hidden = true; $('loading').hidden = false;
+          var res = await fetch('studio.bin', { cache: 'no-cache' });
+          if (!res.ok) throw new Error('file');
+          var buf = new Uint8Array(await res.arrayBuffer());
+          var key = await crypto.subtle.importKey('raw', b64(keyB64), 'AES-GCM', false, ['decrypt']);
+          var plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: buf.slice(0, 12) }, key, buf.slice(12));
+          var html = new TextDecoder().decode(plain);
+          document.open(); document.write(html); document.close();
+        }
+
+        $('gate').addEventListener('submit', async function (e) {
+          e.preventDefault();
+          if (!API) return showGate('Accesso non disponibile in questa versione del sito.');
+          $('go').disabled = true; $('err').textContent = '';
+          try {
+            var r = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: $('pw').value }) });
+            var j = await r.json().catch(function () { return null; });
+            if (!r.ok || !j || !j.key) {
+              var code = j && j.error && j.error.code;
+              showGate(code === 'auth' ? 'Password errata.' : code === 'locked' ? 'Troppi tentativi: riprova tra 15 minuti.' : code === 'not_configured' ? 'L’accesso non è ancora stato attivato.' : code === 'not_published' ? 'Image Studio non è ancora stato pubblicato.' : 'Server non raggiungibile, riprova tra poco.');
+              return;
+            }
+            keep(j.key, $('remember').checked);
+            await open(j.key);
+          } catch (err) {
+            forget();
+            showGate('Non sono riuscito ad aprire Image Studio. Riprova.');
+          } finally { var go = $('go'); if (go) go.disabled = false; }
+        });
+
+        var k = stored();
+        if (k) open(k).catch(function () { forget(); showGate('Image Studio è stato aggiornato: inserisci di nuovo la password.'); });
+        else showGate();
+      })();
+    </script>
+  </body>
+</html>
