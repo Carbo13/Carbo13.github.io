@@ -438,7 +438,7 @@
               act(t.active ? 'Revoca' : 'Riattiva', 'data-sa="tester" data-user-id="' + esc(t.userId) + '" data-on="' + (!t.active) + '"', t.active ? 'danger' : '')];
           })), 'revocare blocca gli accessi futuri; chi ha già lo Studio in cache lo riapre finché non ripubblichi con una chiave nuova');
           html += card('Lista d’attesa', table(['Email', 'Come lo userebbe', 'Dal', ''], s.waitlist.slice().sort(function (a, b) { return String(a.createdAt).localeCompare(String(b.createdAt)); }).map(function (w) {
-            return [esc(w.email || '—'), esc(w.note || '—'), dt(w.createdAt), act('Crea codice', 'data-sa="invite" data-email="' + esc(w.email || '') + '"', 'btn-primary') + ' ' + act('Togli', 'data-sa="unwait" data-user-id="' + esc(w.userId) + '"', 'ghost')];
+            return [esc(w.email || '—'), esc(w.note || '—'), dt(w.createdAt), act('Promuovi', 'data-sa="promote" data-user-id="' + esc(w.userId) + '"', 'btn-primary') + ' ' + act('Crea codice', 'data-sa="invite" data-email="' + esc(w.email || '') + '"', 'ghost') + ' ' + act('Togli', 'data-sa="unwait" data-user-id="' + esc(w.userId) + '"', 'ghost')];
           })), 'in ordine di arrivo; «Crea codice» ne prepara uno da mandargli');
           return html;
         }
@@ -460,6 +460,7 @@
           if (a === 'toggle') studioCall({ action: 'update', code: code, active: on });
           else if (a === 'del') { if (confirm('Eliminare il codice ' + code + '? I tester che l’hanno già usato restano tester.')) studioCall({ action: 'delete', code: code }); }
           else if (a === 'tester') studioCall({ action: 'tester', userId: uid, active: on });
+          else if (a === 'promote') { if (confirm('Dare subito l’accesso a Image Studio a questa persona?')) studioCall({ action: 'promote', userId: uid }); }
           else if (a === 'unwait') { if (confirm('Togliere questa persona dalla lista d’attesa?')) studioCall({ action: 'unwait', userId: uid }); }
           else if (a === 'invite') {
             var before = (st.studio ? st.studio.invites : []).map(function (i) { return i.code; });
