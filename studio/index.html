@@ -30,9 +30,10 @@
   <body>
     <form class="card" id="gate" hidden>
       <h1><svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4fb2a"/><stop offset=".55" stop-color="#03ff9c"/><stop offset="1" stop-color="#0156ed"/></linearGradient></defs><rect x="1" y="1" width="30" height="30" rx="9" fill="url(#lg)"/><path d="M16 7l8 15H8z" fill="none" stroke="#04162e" stroke-width="2.2" stroke-linejoin="round"/><path d="M4 17h7" stroke="#04162e" stroke-width="1.8" stroke-linecap="round" opacity=".9"/></svg> Image Studio <span class="badge">ALPHA</span></h1>
-      <p>Accesso riservato: l’editor fotografico di Kiarym è in fase di prova.</p>
+      <p>Accesso anticipato: l’editor fotografico di Kiarym è in fase di prova, aperto ai tester su invito.</p>
+      <p class="small" id="acctHint">Sei un tester? Entra con il tuo account Kiarym e inserisci il codice invito in <a href="../app/">Account Kiarym → Image Studio</a>: da lì lo Studio si apre senza password. Non hai un codice? Dallo stesso posto puoi metterti in lista d’attesa.</p>
       <p class="warn">Non è nemmeno una beta: mancano funzioni, possono esserci errori e il lavoro può andare perso. Esporta spesso.</p>
-      <input class="input" id="pw" type="password" autocomplete="current-password" placeholder="Password" aria-label="Password" required autofocus />
+      <input class="input" id="pw" type="password" autocomplete="current-password" placeholder="Password dello sviluppatore" aria-label="Password" required />
       <label class="check"><input type="checkbox" id="remember" /> Ricorda su questo dispositivo</label>
       <button class="btn" id="go" type="submit">Entra</button>
       <div class="err" id="err" role="alert"></div>
@@ -42,6 +43,7 @@
     <script>
       (function () {
         var API = 'https://impzlgbmkwccqaonicxh.supabase.co/functions/v1/studio';
+        var KIARO = 'https://impzlgbmkwccqaonicxh.supabase.co/functions/v1/kiaro', SB = 'https://impzlgbmkwccqaonicxh.supabase.co', ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImltcHpsZ2Jta3djY3Fhb25pY3hoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1MTUwNzUsImV4cCI6MjEwNjA5MTA3NX0.3T8ulcJPvIneYoWLf_BE3nzcB943Jb-OvTM0etAvQpY';
         var KEY = 'kiarym.studio.key';
         var $ = function (id) { return document.getElementById(id); };
         function b64(s) { var b = atob(s), u = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; }
@@ -82,9 +84,36 @@
           } finally { var go = $('go'); if (go) go.disabled = false; }
         });
 
-        var k = stored();
-        if (k) open(k).catch(function () { forget(); showGate('Image Studio è stato aggiornato: inserisci di nuovo la password.'); });
-        else showGate();
+        // Tester: la chiave arriva con l'account Kiarym (stessa sessione dell'app, codice invito riscattato)
+        function session() { try { var s = JSON.parse(localStorage.getItem('kiaro.session') || 'null'); return s && s.accessToken ? s : null; } catch (e) { return null; } }
+        async function refreshed(s) {
+          if (!SB || !ANON || !s.refreshToken) return null;
+          var r = await fetch(SB + '/auth/v1/token?grant_type=refresh_token', { method: 'POST', headers: { apikey: ANON, 'Content-Type': 'application/json' }, body: JSON.stringify({ refresh_token: s.refreshToken }) });
+          var d = await r.json().catch(function () { return null; });
+          if (!r.ok || !d || !d.access_token) return null;
+          var n = Object.assign({}, s, { accessToken: d.access_token, refreshToken: d.refresh_token, expiresAt: Date.now() + (Number(d.expires_in) || 3600) * 1000 });
+          try { localStorage.setItem('kiaro.session', JSON.stringify(n)); } catch (e) {}
+          return n;
+        }
+        async function keyFromAccount() {
+          var s = session();
+          if (!KIARO || !s) return null;
+          if (!s.expiresAt || s.expiresAt - Date.now() < 60000) s = await refreshed(s);
+          if (!s) return null;
+          var r = await fetch(KIARO + '/studio-key', { method: 'POST', headers: { Authorization: 'Bearer ' + s.accessToken, apikey: ANON, 'Content-Type': 'application/json' }, body: '{}' });
+          if (r.status === 403) { $('acctHint').textContent = 'Il tuo account (' + (s.email || '') + ') non ha ancora l’accesso: inserisci il codice invito in Account Kiarym → Image Studio, oppure mettiti in lista d’attesa da lì.'; return null; }
+          var j = await r.json().catch(function () { return null; });
+          return r.ok && j && j.key ? j.key : null;
+        }
+
+        (async function () {
+          $('loading').hidden = false;
+          var k = null;
+          try { k = await keyFromAccount(); } catch (e) {}
+          k = k || stored();
+          if (k) open(k).catch(function () { forget(); showGate('Image Studio è stato aggiornato: accedi di nuovo.'); });
+          else showGate();
+        })();
       })();
     </script>
   </body>

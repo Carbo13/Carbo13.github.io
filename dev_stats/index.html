@@ -100,6 +100,16 @@
 
       /* Tabelle */
       .tbl { overflow-x: auto; }
+      .mono { font-family: ui-monospace, Menlo, monospace; letter-spacing: .03em; }
+      .pill { display: inline-block; font-size: 11px; padding: 1px 8px; border-radius: 999px; border: 1px solid var(--border); color: var(--text-2); }
+      .pill.on { color: #4ade80; border-color: rgba(74,222,128,.4); }
+      .pill.off { color: #f87171; border-color: rgba(248,113,113,.4); }
+      .btn-sm { padding: 3px 9px; font-size: 12px; }
+      .btn.danger { color: #f87171; }
+      .banner.ok { border-color: rgba(74,222,128,.45); background: #0b1a10; color: #bbf7d0; }
+      .btn.ghost { background: none; }
+      .studio-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; align-items: end; }
+      .studio-form label { display: grid; gap: 4px; font-size: 12px; color: var(--text-2); }
       table { width: 100%; border-collapse: collapse; }
       th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--border); white-space: nowrap; }
       th { color: var(--text-3); font-weight: 500; font-size: 12.5px; }
@@ -160,7 +170,7 @@
         var MODEL_LABELS = {"google/gemini-3.1-flash-image":"Nano Banana 2","google/gemini-3-pro-image-preview":"Nano Banana Pro","google/gemini-3.1-flash-lite-image":"Nano Banana 2 Lite","openai/gpt-image-2.5-flare":"GPT Image 2.5 Flare","openai/gpt-image-2.5-sunburst":"GPT Image 2.5 Sunburst","black-forest-labs/flux.2-max":"FLUX.2 Max","black-forest-labs/flux.2-pro":"FLUX.2 Pro","black-forest-labs/flux.2-klein-4b":"FLUX.2 Klein","black-forest-labs/flux.2-flex":"FLUX.2 Flex"};
         var MODEL_LOGOS = {"black-forest-labs":"data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZjRmNGY1IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTcuMTEzIDEwLjI0OEgxNC41NmwtMi41NTMtMy42MTYtNy45NjMgMTEuMjdoMi41NThsNS40MDUtNy42NTRoMi41NTJsLTUuNDA0IDcuNjUzaDIuNTY1bDUuMzkyLTcuNjUzTDI0IDIwIDE5Ljk3IDIwdi0yLjA5MWwtMi44NTctNC4wNDQtMi44NDIgNC4wMzdWMjBIMEwxMi4wMDggM2w1LjEwNSA3LjI0OXoiPjwvcGF0aD48L3N2Zz4=","google":"data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTIwLjYxNiAxMC44MzVhMTQuMTQ3IDE0LjE0NyAwIDAxLTQuNDUtMy4wMDEgMTQuMTExIDE0LjExMSAwIDAxLTMuNjc4LTYuNDUyLjUwMy41MDMgMCAwMC0uOTc1IDAgMTQuMTM0IDE0LjEzNCAwIDAxLTMuNjc5IDYuNDUyIDE0LjE1NSAxNC4xNTUgMCAwMS00LjQ1IDMuMDAxYy0uNjUuMjgtMS4zMTguNTA1LTIuMDAyLjY3OGEuNTAyLjUwMiAwIDAwMCAuOTc1Yy42ODQuMTcyIDEuMzUuMzk3IDIuMDAyLjY3N2ExNC4xNDcgMTQuMTQ3IDAgMDE0LjQ1IDMuMDAxIDE0LjExMiAxNC4xMTIgMCAwMTMuNjc5IDYuNDUzLjUwMi41MDIgMCAwMC45NzUgMGMuMTcyLS42ODUuMzk3LTEuMzUxLjY3Ny0yLjAwM2ExNC4xNDUgMTQuMTQ1IDAgMDEzLjAwMS00LjQ1IDE0LjExMyAxNC4xMTMgMCAwMTYuNDUzLTMuNjc4LjUwMy41MDMgMCAwMDAtLjk3NSAxMy4yNDUgMTMuMjQ1IDAgMDEtMi4wMDMtLjY3OHoiIGZpbGw9IiMzMTg2RkYiPjwvcGF0aD48cGF0aCBkPSJNMjAuNjE2IDEwLjgzNWExNC4xNDcgMTQuMTQ3IDAgMDEtNC40NS0zLjAwMSAxNC4xMTEgMTQuMTExIDAgMDEtMy42NzgtNi40NTIuNTAzLjUwMyAwIDAwLS45NzUgMCAxNC4xMzQgMTQuMTM0IDAgMDEtMy42NzkgNi40NTIgMTQuMTU1IDE0LjE1NSAwIDAxLTQuNDUgMy4wMDFjLS42NS4yOC0xLjMxOC41MDUtMi4wMDIuNjc4YS41MDIuNTAyIDAgMDAwIC45NzVjLjY4NC4xNzIgMS4zNS4zOTcgMi4wMDIuNjc3YTE0LjE0NyAxNC4xNDcgMCAwMTQuNDUgMy4wMDEgMTQuMTEyIDE0LjExMiAwIDAxMy42NzkgNi40NTMuNTAyLjUwMiAwIDAwLjk3NSAwYy4xNzItLjY4NS4zOTctMS4zNTEuNjc3LTIuMDAzYTE0LjE0NSAxNC4xNDUgMCAwMTMuMDAxLTQuNDUgMTQuMTEzIDE0LjExMyAwIDAxNi40NTMtMy42NzguNTAzLjUwMyAwIDAwMC0uOTc1IDEzLjI0NSAxMy4yNDUgMCAwMS0yLjAwMy0uNjc4eiIgZmlsbD0idXJsKCNsb2JlLWljb25zLWdlbWluaS0wLV9SXzBfKSI+PC9wYXRoPjxwYXRoIGQ9Ik0yMC42MTYgMTAuODM1YTE0LjE0NyAxNC4xNDcgMCAwMS00LjQ1LTMuMDAxIDE0LjExMSAxNC4xMTEgMCAwMS0zLjY3OC02LjQ1Mi41MDMuNTAzIDAgMDAtLjk3NSAwIDE0LjEzNCAxNC4xMzQgMCAwMS0zLjY3OSA2LjQ1MiAxNC4xNTUgMTQuMTU1IDAgMDEtNC40NSAzLjAwMWMtLjY1LjI4LTEuMzE4LjUwNS0yLjAwMi42NzhhLjUwMi41MDIgMCAwMDAgLjk3NWMuNjg0LjE3MiAxLjM1LjM5NyAyLjAwMi42NzdhMTQuMTQ3IDE0LjE0NyAwIDAxNC40NSAzLjAwMSAxNC4xMTIgMTQuMTEyIDAgMDEzLjY3OSA2LjQ1My41MDIuNTAyIDAgMDAuOTc1IDBjLjE3Mi0uNjg1LjM5Ny0xLjM1MS42NzctMi4wMDNhMTQuMTQ1IDE0LjE0NSAwIDAxMy4wMDEtNC40NSAxNC4xMTMgMTQuMTEzIDAgMDE2LjQ1My0zLjY3OC41MDMuNTAzIDAgMDAwLS45NzUgMTMuMjQ1IDEzLjI0NSAwIDAxLTIuMDAzLS42Nzh6IiBmaWxsPSJ1cmwoI2xvYmUtaWNvbnMtZ2VtaW5pLTEtX1JfMF8pIj48L3BhdGg+PHBhdGggZD0iTTIwLjYxNiAxMC44MzVhMTQuMTQ3IDE0LjE0NyAwIDAxLTQuNDUtMy4wMDEgMTQuMTExIDE0LjExMSAwIDAxLTMuNjc4LTYuNDUyLjUwMy41MDMgMCAwMC0uOTc1IDAgMTQuMTM0IDE0LjEzNCAwIDAxLTMuNjc5IDYuNDUyIDE0LjE1NSAxNC4xNTUgMCAwMS00LjQ1IDMuMDAxYy0uNjUuMjgtMS4zMTguNTA1LTIuMDAyLjY3OGEuNTAyLjUwMiAwIDAwMCAuOTc1Yy42ODQuMTcyIDEuMzUuMzk3IDIuMDAyLjY3N2ExNC4xNDcgMTQuMTQ3IDAgMDE0LjQ1IDMuMDAxIDE0LjExMiAxNC4xMTIgMCAwMTMuNjc5IDYuNDUzLjUwMi41MDIgMCAwMC45NzUgMGMuMTcyLS42ODUuMzk3LTEuMzUxLjY3Ny0yLjAwM2ExNC4xNDUgMTQuMTQ1IDAgMDEzLjAwMS00LjQ1IDE0LjExMyAxNC4xMTMgMCAwMTYuNDUzLTMuNjc4LjUwMy41MDMgMCAwMDAtLjk3NSAxMy4yNDUgMTMuMjQ1IDAgMDEtMi4wMDMtLjY3OHoiIGZpbGw9InVybCgjbG9iZS1pY29ucy1nZW1pbmktMi1fUl8wXykiPjwvcGF0aD48ZGVmcz48bGluZWFyR3JhZGllbnQgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiIGlkPSJsb2JlLWljb25zLWdlbWluaS0wLV9SXzBfIiB4MT0iNyIgeDI9IjExIiB5MT0iMTUuNSIgeTI9IjEyIj48c3RvcCBzdG9wLWNvbG9yPSIjMDhCOTYyIj48L3N0b3A+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMDhCOTYyIiBzdG9wLW9wYWNpdHk9IjAiPjwvc3RvcD48L2xpbmVhckdyYWRpZW50PjxsaW5lYXJHcmFkaWVudCBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgaWQ9ImxvYmUtaWNvbnMtZ2VtaW5pLTEtX1JfMF8iIHgxPSI4IiB4Mj0iMTEuNSIgeTE9IjUuNSIgeTI9IjExIj48c3RvcCBzdG9wLWNvbG9yPSIjRjk0NTQzIj48L3N0b3A+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjRjk0NTQzIiBzdG9wLW9wYWNpdHk9IjAiPjwvc3RvcD48L2xpbmVhckdyYWRpZW50PjxsaW5lYXJHcmFkaWVudCBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgaWQ9ImxvYmUtaWNvbnMtZ2VtaW5pLTItX1JfMF8iIHgxPSIzLjUiIHgyPSIxNy41IiB5MT0iMTMuNSIgeTI9IjEyIj48c3RvcCBzdG9wLWNvbG9yPSIjRkFCQzEyIj48L3N0b3A+PHN0b3Agb2Zmc2V0PSIuNDYiIHN0b3AtY29sb3I9IiNGQUJDMTIiIHN0b3Atb3BhY2l0eT0iMCI+PC9zdG9wPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjwvc3ZnPg==","openai":"data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZjRmNGY1IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOS4yMDUgOC42NTh2LTIuMjZjMC0uMTkuMDcyLS4zMzMuMjM4LS40MjhsNC41NDMtMi42MTZjLjYxOS0uMzU3IDEuMzU2LS41MjMgMi4xMTctLjUyMyAyLjg1NCAwIDQuNjYyIDIuMjEyIDQuNjYyIDQuNTY2IDAgLjE2NyAwIC4zNTctLjAyNC41NDdsLTQuNzEtMi43NTlhLjc5Ny43OTcgMCAwMC0uODU2IDBsLTUuOTcgMy40NzN6bTEwLjYwOSA4LjhWMTIuMDZjMC0uMzMzLS4xNDMtLjU3LS40MjktLjczN2wtNS45Ny0zLjQ3MyAxLjk1LTEuMTE4YS40MzMuNDMzIDAgMDEuNDc2IDBsNC41NDMgMi42MTdjMS4zMDkuNzYgMi4xODkgMi4zNzggMi4xODkgMy45NDggMCAxLjgwOC0xLjA3IDMuNDczLTIuNzYgNC4xNjN6TTcuODAyIDEyLjcwM2wtMS45NS0xLjE0MmMtLjE2Ny0uMDk1LS4yMzktLjIzOC0uMjM5LS40MjhWNS44OTljMC0yLjU0NSAxLjk1LTQuNDcyIDQuNTkxLTQuNDcyIDEgMCAxLjkyNy4zMzMgMi43MTIuOTI4TDguMjMgNS4wNjdjLS4yODUuMTY2LS40MjguNDA0LS40MjguNzM3djYuODk4ek0xMiAxNS4xMjhsLTIuNzk1LTEuNTd2LTMuMzNMMTIgOC42NThsMi43OTUgMS41N3YzLjMzTDEyIDE1LjEyOHptMS43OTYgNy4yM2MtMSAwLTEuOTI3LS4zMzItMi43MTItLjkyN2w0LjY4Ni0yLjcxMmMuMjg1LS4xNjYuNDI4LS40MDQuNDI4LS43Mzd2LTYuODk4bDEuOTc0IDEuMTQyYy4xNjcuMDk1LjIzOC4yMzguMjM4LjQyOHY1LjIzM2MwIDIuNTQ1LTEuOTc0IDQuNDcyLTQuNjE0IDQuNDcyem0tNS42MzctNS4zMDNsLTQuNTQ0LTIuNjE3Yy0xLjMwOC0uNzYxLTIuMTg4LTIuMzc4LTIuMTg4LTMuOTQ4QTQuNDgyIDQuNDgyIDAgMDE0LjIxIDYuMzI3djUuNDIzYzAgLjMzMy4xNDMuNTcxLjQyOC43MzhsNS45NDcgMy40NDktMS45NSAxLjExOGEuNDMyLjQzMiAwIDAxLS40NzYgMHptLS4yNjIgMy45Yy0yLjY4OCAwLTQuNjYyLTIuMDIxLTQuNjYyLTQuNTE5IDAtLjE5LjAyNC0uMzguMDQ3LS41N2w0LjY4NiAyLjcxYy4yODYuMTY3LjU3MS4xNjcuODU2IDBsNS45Ny0zLjQ0OHYyLjI2YzAgLjE5LS4wNy4zMzMtLjIzNy40MjhsLTQuNTQzIDIuNjE2Yy0uNjE5LjM1Ny0xLjM1Ni41MjMtMi4xMTcuNTIzem01Ljg5OSAyLjgzYTUuOTQ3IDUuOTQ3IDAgMDA1LjgyNy00Ljc1NkMyMi4yODcgMTguMzM5IDI0IDE1Ljg0IDI0IDEzLjI5NmMwLTEuNjY1LS43MTMtMy4yODItMS45OTgtNC40NDguMTE5LS41LjE5LS45OTkuMTktMS40OTggMC0zLjQwMS0yLjc1OS01Ljk0Ny01Ljk0Ni01Ljk0Ny0uNjQyIDAtMS4yNi4wOTUtMS44OC4zMUE1Ljk2MiA1Ljk2MiAwIDAwMTAuMjA1IDBhNS45NDcgNS45NDcgMCAwMC01LjgyNyA0Ljc1N0MxLjcxMyA1LjQ0NyAwIDcuOTQ1IDAgMTAuNDljMCAxLjY2Ni43MTMgMy4yODMgMS45OTggNC40NDgtLjExOS41LS4xOSAxLS4xOSAxLjQ5OSAwIDMuNDAxIDIuNzU5IDUuOTQ2IDUuOTQ2IDUuOTQ2LjY0MiAwIDEuMjYtLjA5NSAxLjg4LS4zMDlhNS45NiA1Ljk2IDAgMDA0LjE2MiAxLjcxM3oiPjwvcGF0aD48L3N2Zz4=","openrouter":"data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZjRmNGY1IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTguNjU0IDMuODdhNS4wODcgNS4wODcgMCAxMTAgMTAuMTc0TDIzLjcgMTkuMDljLjY0LjY0MS4xODcgMS43MzctLjcyIDEuNzM3SDguNDhhOC40NzkgOC40NzkgMCAwMTAtMTYuOTU4aDEwLjE3NXpNOC40NzkgNy4yNmE1LjA4NyA1LjA4NyAwIDEwMCAxMC4xNzYgNS4wODcgNS4wODcgMCAwMDAtMTAuMTc1eiI+PC9wYXRoPjwvc3ZnPg=="};
         var KEY = 'kiaro.devStats.pw';
-        var TABS = [['overview', 'Panoramica'], ['users', 'Utenti'], ['usage', 'Utilizzo'], ['credits', 'Crediti'], ['money', 'Soldi']];
+        var TABS = [['overview', 'Panoramica'], ['users', 'Utenti'], ['usage', 'Utilizzo'], ['credits', 'Crediti'], ['money', 'Soldi'], ['studio', 'Image Studio']];
         var RANGES = [[7, '7 giorni'], [30, '30 giorni'], [90, '90 giorni']];
         var PLAN = { free: 'Free', pro: 'Pro', full: 'Full', byok: 'Chiave propria', dev: 'Sviluppatore' };
         var REASON = { ai: 'Richiesta AI', ai_open: 'Prenotazione aperta', reserve: 'Prenotazione', settle: 'Chiusura (restituito − costo)', subscription: 'Accredito abbonamento', renewal: 'Rinnovo', free_monthly: 'Ricarica Free', upgrade: 'Passaggio di piano', ended: 'Fine abbonamento', refund: 'Rimborso' };
@@ -390,7 +400,78 @@
           var note = r.reason === 'ai_open' ? 'prenotazione aperta' : r.ok === false ? 'fallita, restituito tutto' : r.feature ? (FEAT[r.feature] || r.feature) : '';
           return what + (note ? ' <span class="muted">· ' + esc(note) + '</span>' : '');
         }
+        // ---- Image Studio: codici invito, tester e lista d'attesa -------------------------------------
+        var STUDIO_API = API.replace(/\/stats$/, '/stats-studio');
+        async function studioCall(body) {
+          st.studioErr = '';
+          try {
+            var res = await fetch(STUDIO_API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(Object.assign({ password: pw() }, body)) });
+            var j = await res.json().catch(function () { return null; });
+            if (!res.ok) throw new Error((j && j.error && j.error.message) || 'Errore ' + res.status);
+            st.studio = j;
+          } catch (e) { st.studioErr = e.message; }
+          if (st.tab === 'studio') render();
+        }
+        function studioView() {
+          var s = st.studio;
+          if (!s) { if (!st.studioLoading) { st.studioLoading = true; studioCall({ action: 'list' }).then(function () { st.studioLoading = false; }); } return card('Image Studio', '<p class="muted">Carico…</p>'); }
+          var now = Date.now();
+          var status = function (i) { return !i.active ? '<span class="pill off">disattivato</span>' : i.expiresAt && Date.parse(i.expiresAt) < now ? '<span class="pill off">scaduto</span>' : i.uses >= i.maxUses ? '<span class="pill">esaurito</span>' : '<span class="pill on">attivo</span>'; };
+          var act = function (label, attrs, cls) { return '<button type="button" class="btn btn-sm ' + (cls || '') + '" ' + attrs + '>' + label + '</button>'; };
+          var activeTesters = s.testers.filter(function (t) { return t.active; }).length;
+          var liveCodes = s.invites.filter(function (i) { return i.active && i.uses < i.maxUses && !(i.expiresAt && Date.parse(i.expiresAt) < now); }).length;
+          var html = '<div class="kpis">' + kpi('Tester attivi', n0(activeTesters), s.testers.length > activeTesters ? n0(s.testers.length - activeTesters) + ' revocati' : '') + kpi('Codici utilizzabili', n0(liveCodes), n0(s.invites.length) + ' in tutto') + kpi('In lista d’attesa', n0(s.waitlist.length)) + '</div>';
+          if (st.studioErr) html += '<div class="banner">' + esc(st.studioErr) + '</div>';
+          if (st.newCode) html += '<div class="banner ok">Nuovo codice: <b class="mono">' + esc(st.newCode) + '</b> ' + act('Copia', 'data-sa="copy" data-code="' + esc(st.newCode) + '"') + ' — il tester lo inserisce in Account Kiarym → Image Studio.</div>';
+          html += card('Nuovo codice invito', '<form id="newCode" class="studio-form">' +
+            '<label>Per chi (nota)<input class="input" id="ncLabel" placeholder="es. Marta, gruppo Instagram…" maxlength="120"></label>' +
+            '<label>Usi<input class="input" id="ncUses" type="number" min="1" max="1000" value="1"></label>' +
+            '<label>Scade il (facoltativo)<input class="input" id="ncExp" type="date"></label>' +
+            '<label>Codice (facoltativo)<input class="input mono" id="ncCode" placeholder="automatico: KIA-XXXX-XXXX" maxlength="40"></label>' +
+            '<button class="btn btn-primary" type="submit">Crea codice</button></form>', 'un codice con più usi va bene per un gruppo');
+          html += card('Codici invito', table(['Codice', 'Per chi', 'Usi', 'Scadenza', 'Stato', ''], s.invites.slice().sort(function (a, b) { return String(b.createdAt).localeCompare(String(a.createdAt)); }).map(function (i) {
+            return ['<span class="mono">' + esc(i.code) + '</span> ' + act('Copia', 'data-sa="copy" data-code="' + esc(i.code) + '"', 'ghost'), esc(i.label || '—'), n0(i.uses) + ' / ' + n0(i.maxUses), i.expiresAt ? dt(i.expiresAt) : '—', status(i),
+              act(i.active ? 'Disattiva' : 'Riattiva', 'data-sa="toggle" data-code="' + esc(i.code) + '" data-on="' + (!i.active) + '"') + ' ' + act('Elimina', 'data-sa="del" data-code="' + esc(i.code) + '"', 'danger')];
+          })), 'i codici disattivati o scaduti non si possono più riscattare');
+          html += card('Tester', table(['Email', 'Codice', 'Dal', 'Ultimo accesso', 'Stato', ''], s.testers.slice().sort(function (a, b) { return String(b.grantedAt).localeCompare(String(a.grantedAt)); }).map(function (t) {
+            return [esc(t.email || '—'), '<span class="mono">' + esc(t.code || '—') + '</span>', dt(t.grantedAt), dt(t.lastAccess), t.active ? '<span class="pill on">attivo</span>' : '<span class="pill off">revocato</span>',
+              act(t.active ? 'Revoca' : 'Riattiva', 'data-sa="tester" data-user-id="' + esc(t.userId) + '" data-on="' + (!t.active) + '"', t.active ? 'danger' : '')];
+          })), 'revocare blocca gli accessi futuri; chi ha già lo Studio in cache lo riapre finché non ripubblichi con una chiave nuova');
+          html += card('Lista d’attesa', table(['Email', 'Come lo userebbe', 'Dal', ''], s.waitlist.slice().sort(function (a, b) { return String(a.createdAt).localeCompare(String(b.createdAt)); }).map(function (w) {
+            return [esc(w.email || '—'), esc(w.note || '—'), dt(w.createdAt), act('Crea codice', 'data-sa="invite" data-email="' + esc(w.email || '') + '"', 'btn-primary') + ' ' + act('Togli', 'data-sa="unwait" data-user-id="' + esc(w.userId) + '"', 'ghost')];
+          })), 'in ordine di arrivo; «Crea codice» ne prepara uno da mandargli');
+          return html;
+        }
+        document.addEventListener('submit', function (e) {
+          if (e.target.id !== 'newCode') return;
+          e.preventDefault();
+          var exp = $('ncExp').value;
+          var before = (st.studio ? st.studio.invites : []).map(function (i) { return i.code; });
+          studioCall({ action: 'create', label: $('ncLabel').value, maxUses: Number($('ncUses').value) || 1, expiresAt: exp ? exp + 'T23:59:59' : null, code: $('ncCode').value }).then(function () {
+            var c = st.studio && st.studio.invites.filter(function (i) { return before.indexOf(i.code) < 0; })[0];
+            st.newCode = c ? c.code : null; render();
+          });
+        });
+        document.addEventListener('click', function (e) {
+          var b = e.target.closest('[data-sa]');
+          if (!b) return;
+          var a = b.getAttribute('data-sa'), code = b.getAttribute('data-code'), uid = b.getAttribute('data-user-id'), on = b.getAttribute('data-on') === 'true';
+          if (a === 'copy') { try { navigator.clipboard.writeText(code); b.textContent = 'Copiato'; } catch (x) {} return; }
+          if (a === 'toggle') studioCall({ action: 'update', code: code, active: on });
+          else if (a === 'del') { if (confirm('Eliminare il codice ' + code + '? I tester che l’hanno già usato restano tester.')) studioCall({ action: 'delete', code: code }); }
+          else if (a === 'tester') studioCall({ action: 'tester', userId: uid, active: on });
+          else if (a === 'unwait') { if (confirm('Togliere questa persona dalla lista d’attesa?')) studioCall({ action: 'unwait', userId: uid }); }
+          else if (a === 'invite') {
+            var before = (st.studio ? st.studio.invites : []).map(function (i) { return i.code; });
+            studioCall({ action: 'create', label: b.getAttribute('data-email'), maxUses: 1 }).then(function () {
+              var c = st.studio && st.studio.invites.filter(function (i) { return before.indexOf(i.code) < 0; })[0];
+              st.newCode = c ? c.code : null; window.scrollTo({ top: 0, behavior: 'smooth' }); render();
+            });
+          }
+        });
+
         var views = {
+          studio: studioView,
           overview: function (d) {
             var u = d.users, m = d.money, ds = days(), ms = modelSeries(ds);
             var topModels = ms.ids.slice(0, 6).map(function (id, k) { return [model(id), ms.tot[id], modelName(id)]; });
