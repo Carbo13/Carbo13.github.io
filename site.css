@@ -1,7 +1,7 @@
 /* Sito di presentazione di Kiarym. Stessi colori dell'app (src/styles/tokens.css). */
 :root {
-  --font: 'Source Sans 3', 'Segoe UI', system-ui, -apple-system, sans-serif;
-  --display: 'Plus Jakarta Sans', 'Source Sans 3', 'Segoe UI', system-ui, sans-serif;
+  --font: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --display: 'Sora', 'Inter', 'Segoe UI', system-ui, sans-serif;
   --accent: #0fe8a0;
   --accent-fg: #3df5b0;
   --accent-text: #04162e;
@@ -26,7 +26,7 @@
 html { scroll-behavior: smooth; }
 body { margin: 0; font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.55; font-size: 17px; }
 a { color: var(--glow-fg); }
-h1, h2, h3, .brand, .btn, .plan .price { font-family: var(--display); }
+h1, h2, h3, .brand, .btn, .plan .price, .faq summary { font-family: var(--display); }
 img, svg { display: block; }
 .wrap { width: min(1120px, 100% - 32px); margin: 0 auto; }
 
